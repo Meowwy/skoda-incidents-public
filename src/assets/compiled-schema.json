@@ -1,0 +1,184 @@
+{
+  "version": 1,
+  "steps": [
+    {
+      "id": "user_id",
+      "type": "hidden",
+      "source": "active_directory"
+    },
+    {
+      "id": "oblast",
+      "type": "select",
+      "question": "Oblast",
+      "options": [
+        "Logistika",
+        "XXX",
+        "YYY"
+      ]
+    },
+    {
+      "id": "podoblast",
+      "type": "select",
+      "question": "Podoblast",
+      "options": [
+        "Inhouse - Škoda auto",
+        "Inbound",
+        "Outbound"
+      ]
+    },
+    {
+      "id": "lokalita",
+      "type": "select",
+      "question": "Odkud se nahlašuje?",
+      "options": [
+        "MB",
+        "KV",
+        "VR",
+        "Teplice",
+        "EDL MB",
+        "EDL KV"
+      ]
+    },
+    {
+      "id": "origin_dead_end",
+      "type": "info",
+      "question": "Zastavení procesu",
+      "description": "Pro toto místo prosím přímo kontaktujte Dispečera.",
+      "render_if": "origin_location == 'Externí firma'",
+      "action": "stop"
+    },
+    {
+      "id": "system",
+      "type": "select",
+      "question": "Jaký systém má výpadek?",
+      "options": [
+        "HOD",
+        "iTLS",
+        "LOGIS",
+        "INEAS",
+        "LKW Control",
+        "SAP"
+      ],
+      "render_if": "origin_location != 'Externí firma'"
+    },
+    {
+      "id": "lkw_purpose",
+      "type": "select",
+      "question": "K čemu se systém používá?",
+      "options": [
+        "Závodová ochrana (na bráně)",
+        "Interní logistika (PLO)",
+        "Něco jiného"
+      ],
+      "render_if": "system == 'LKW Control'"
+    },
+    {
+      "id": "lkw_purpose_dead_end",
+      "type": "info",
+      "question": "Mimo standardní proces",
+      "description": "Kontaktujte svého nadřízeného.",
+      "render_if": "system == 'LKW Control' && lkw_purpose == 'Něco jiného'",
+      "action": "stop"
+    },
+    {
+      "id": "lkw_device",
+      "type": "select",
+      "question": "Jaké zařízení používáte?",
+      "options": [
+        "Telematika",
+        "Vlastní mobilní telefon",
+        "HDT",
+        "Systém LKWc",
+        "Syncro Supply Center"
+      ],
+      "render_if": "system == 'LKW Control' && lkw_purpose != 'Něco jiného'"
+    },
+    {
+      "id": "lkw_symptom",
+      "type": "select",
+      "question": "Co přesně nefunguje?",
+      "options": [
+        "Výpadek telematiky",
+        "Nemožnost přihlášení",
+        "Výpadek systému",
+        "Chyba v rozhraní",
+        "Prázdný seznam jízd"
+      ],
+      "render_if": "system == 'LKW Control' && lkw_purpose != 'Něco jiného'"
+    },
+    {
+      "id": "diag_tel_operator",
+      "type": "boolean",
+      "question": "Je hlášený / registrovaný výpadek u operátora?",
+      "render_if": "lkw_symptom == 'Výpadek telematiky'",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Výpadek operátora",
+          "resolver_group": "MOBILE PHONES Support SKODA",
+          "impact": 2,
+          "can_close": "Ano",
+          "backup_strategy": "Není"
+        }
+      }
+    },
+    {
+      "id": "diag_tel_data",
+      "type": "boolean",
+      "question": "Jsou aktivní data?",
+      "render_if": "lkw_symptom == 'Výpadek telematiky' && diag_tel_operator == false",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Chybné nastavení",
+          "resolver_group": "AMS NTT Data Service Desk",
+          "impact": 2,
+          "can_close": "Ano",
+          "backup_strategy": "Správné nastavení přes help desk"
+        }
+      }
+    },
+    {
+      "id": "diag_tel_airplane",
+      "type": "boolean",
+      "question": "Je zapnutý režim letadlo?",
+      "render_if": "lkw_symptom == 'Výpadek telematiky' && diag_tel_data == true",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Chybné nastavení",
+          "resolver_group": "AMS NTT Data Service Desk",
+          "impact": 2,
+          "can_close": "Ano",
+          "backup_strategy": "Správné nastavení přes help desk"
+        }
+      }
+    },
+    {
+      "id": "diag_tel_multiple",
+      "type": "boolean",
+      "question": "Mají další telematiky stejnou závadu?",
+      "render_if": "lkw_symptom == 'Výpadek telematiky' && diag_tel_airplane == false",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Nefunkčnost 1 telematiky",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 2,
+          "can_close": "Ano",
+          "backup_strategy": "Výměna telematiky"
+        }
+      },
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Globální výpadek telematiky",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 2,
+          "can_close": "Ne",
+          "backup_strategy": "Není známa (krizový stav)"
+        }
+      }
+    }
+  ]
+}

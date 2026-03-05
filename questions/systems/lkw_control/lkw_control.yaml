@@ -1,0 +1,55 @@
+# File: systems/lkw_control/lkw_control.yaml
+# Description: Context and symptom selection for LKW Control
+
+steps:
+  # 4. K čemu se používá? (Use Case)
+  - id: lkw_purpose
+    type: select
+    question: "K čemu se systém používá?"
+    options:
+      - "Závodová ochrana (na bráně)"
+      - "Interní logistika (PLO)"
+      - "Něco jiného"
+    render_if: "system == 'LKW Control'"
+
+  # Dead End from SL2 (Dashed red line "Kontaktujte nadřízeného")
+  - id: lkw_purpose_dead_end
+    type: info
+    question: "Mimo standardní proces"
+    description: "Kontaktujte svého nadřízeného."
+    render_if: "system == 'LKW Control' && lkw_purpose == 'Něco jiného'"
+    action: stop
+
+  # 5. Jaké zařízení? (Device)
+  - id: lkw_device
+    type: select
+    question: "Jaké zařízení používáte?"
+    options:
+      - "Telematika"
+      - "Vlastní mobilní telefon"
+      - "HDT"
+      - "Systém LKWc"
+      - "Syncro Supply Center"
+    render_if: "system == 'LKW Control' && lkw_purpose != 'Něco jiného'"
+
+  # 6. Co nefunguje? (Main Symptom)
+  - id: lkw_symptom
+    type: select
+    question: "Co přesně nefunguje?"
+    options:
+      - "Výpadek telematiky"
+      - "Nemožnost přihlášení"
+      - "Výpadek systému"
+      - "Chyba v rozhraní"
+      - "Prázdný seznam jízd"
+    render_if: "system == 'LKW Control' && lkw_purpose != 'Něco jiného'"
+
+  # ==========================================
+  # 🩺 DIAGNOSTIC INCLUDES (HOW TO ADD NEW DRILL-DOWNS)
+  # ==========================================
+
+  # If they selected "Výpadek telematiky", load the SL3 flowchart
+  - $include: "lkw_control_telematics_outage.yaml"
+
+  # To add logic for "Nemožnost přihlášení" later, you would create a new file:
+  # - $include: "../diagnostics/lkw_login_issue.yaml"
