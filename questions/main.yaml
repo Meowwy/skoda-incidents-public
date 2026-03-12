@@ -1,5 +1,7 @@
 # File: main.yaml
 # Description: The main entry point for the ITSM Triage Wizard
+# Note: Area, Sub-area, Location, and Warehouse selection is handled by the dashboard UI.
+# The YAML schema starts from system selection onwards.
 version: 1.0
 
 steps:
@@ -9,80 +11,24 @@ steps:
     source:
       active_directory
 
-      # 2. Odkud se nahlašuje? (Where from?)
-  - id: oblast
-    type: select
-    question: "Oblast"
-    options:
-      - "Logistika"
-      - "Výroba (bude)"
-      - "YYY"
-
-    # 3. Odkud se nahlašuje? (Where from?)
-  - id: podoblast
-    type: select
-    question: "Podoblast"
-    options:
-      - "Inhouse - Škoda auto"
-      - "Inbound (zatím nic)"
-      - "Outbound (zatím nic)"
-
-    # 4. Odkud se nahlašuje? (Where from?)
-  - id: lokalita
-    type: select
-    question: "Odkud se nahlašuje?"
-    options:
-      - "MB - MLadá Boleslav (nutná bližší spec)"
-      - "KV - Kvasiny (nutná bližší spec)"
-      - "VR"
-      - "Teplice"
-      - "EDL MB"
-      - "EDL KV"
-
-      # 4. Odkud se nahlašuje? (Where from?)
-  - id: hala
-    type: select
-    question: "Odkud se nahlašuje?"
-    options:
-      - "MB - MLadá Boleslav (nutná bližší spec)"
-      - "KV - Kvasiny (nutná bližší spec)"
-      - "VR"
-      - "Teplice"
-      - "EDL MB"
-      - "EDL KV"
-
-  # --- DEAD END EXAMPLE ---
-  # Based on SL2: "Jaká brána, firma, místo... Kontaktujte Dispečera"
-  - id: origin_dead_end
-    type: info
-    question: "Zastavení procesu"
-    description: "Pro toto místo prosím přímo kontaktujte Dispečera."
-    render_if: "origin_location == 'Externí firma'"
-    action: stop # This tells your Svelte app to show the message and stop.
-
-  # 3. Jaký systém? (Which system?)
+  # 2. Jaký systém? (Which system?)
   - id: system
     type: select
     question: "Jaký systém má výpadek?"
     options:
+      - "LKW Control"
       - "HOD"
       - "iTLS"
       - "LOGIS"
       - "INEAS"
-      - "LKW Control" # We are building this branch
       - "SAP"
-    # Only show if they didn't hit the dead end above
-    #render_if: "origin_location != 'Externí firma'"
 
   # ==========================================
-  # 🔌 SYSTEM INCLUDES (HOW TO ADD NEW ONES)
+  # SYSTEM INCLUDES
   # ==========================================
 
-  # Includes the specific steps for LKW Control
+  # LKW Control branch
   - $include: "./systems/lkw_control/lkw_control.yaml"
 
-  # To add SAP later, you would create sap.yaml and uncomment the line below:
-  # - $include: "./systems/sap.yaml"
-
-  # To add HOD later, you would do the same:
-  # - $include: "./systems/hod.yaml"
+  # HOD branch (mock)
+  - $include: "./systems/hod/hod.yaml"

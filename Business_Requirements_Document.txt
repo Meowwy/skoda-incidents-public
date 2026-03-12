@@ -1,0 +1,117 @@
+Project Specification: Interactive ITSM Triage Wizard
+
+Document Version: 1.0
+Project: Logistics Information Systems Incident Triage
+Target Audience: Development Team, IT Stakeholders, Project Managers
+
+1. Business Context & Problem Statement
+
+The company operates multiple critical logistics information systems (e.g., LKW Control, SAP, HOD, iTLS, LOGIS). When a system failure or hardware issue occurs on the floor or at the gates, end-users (reporters) must identify the issue and contact the correct IT support group.
+
+Currently, the troubleshooting and triage methodology exists only as static PowerPoint presentation flowcharts (referenced as SL1, SL2, and SL3). This manual process is slow, prone to human error, and delays the resolution of critical logistics incidents.
+
+The Goal: Digitize this methodology into a dynamic, interactive web-based "Triage Wizard." The application will guide the user through a series of context-aware questions, determine the exact technical defect, identify the correct resolver group, and ultimately automate the creation of an incident ticket in the company's ITSM tool.
+
+2. Project Objectives
+
+Reduce Triage Time: Guide users to the root cause using an intuitive, step-by-step interface.
+
+Eliminate Misrouted Tickets: Automatically determine the correct IT resolver group (e.g., MOBILE PHONES Support, AMS NTT Data Service Desk) based on diagnostic logic.
+
+Automate Ticket Creation: Replace manual email/phone reporting with an automated API integration to the corporate ticketing system.
+
+Ensure Long-term Maintainability: Build the system so that non-developers (Business Analysts/Managers) can update the questions and logic without altering the source code.
+
+3. Functional Requirements
+
+3.1. User Experience (The Wizard)
+
+Step-by-Step UI: The application must present one question (or logical group of questions) at a time.
+
+Dynamic Branching: Subsequent questions must be displayed conditionally based on previous answers (e.g., selecting "LKW Control" loads a completely different set of questions than "SAP").
+
+Navigation: Users must be able to navigate forward ("Další") and backward ("Zpět"). The back button must remember the user's exact path, even if they trigger complex branching logic.
+
+Dead Ends (Process Stops): Certain answers must halt the wizard and display an informational message (e.g., "Contact the Dispatcher directly").
+
+Resolution Screen: At the end of a successful diagnostic flow, the app must display:
+
+The identified Defect (Skutečná vada).
+
+The assigned Resolver Group (Řešitelská skupina).
+
+A backup strategy / workaround, if applicable (Záložní strategie).
+
+3.2. Data Capture
+
+The application must automatically capture the identity of the person reporting the issue (e.g., via Active Directory / SSO integration) where possible.
+
+Every answer selected by the user must be stored in a flat, structured data object (State) to be sent as a payload upon completion.
+
+4. Technical Architecture & Solution Design
+
+To satisfy the maintainability requirement, the application will be built using a Schema-Driven UI architecture.
+
+4.1. The "Single Source of Truth" (YAML)
+
+The business logic will not be hardcoded into the frontend application. Instead, the decision trees (from the PowerPoint diagrams) will be mapped into modular YAML files.
+
+Decoupling: Each logistics system (LKW Control, SAP) and its sub-diagnostics (Telematics Outage) will have its own YAML file.
+
+Build Step: A build script (Node.js) will stitch these modular YAML files together into a single compiled-schema.json file during deployment.
+
+Benefit: When logistics methodologies change, business owners only need to modify highly readable YAML files. No UI/Frontend code compilation is required to change the logic.
+
+4.2. The Frontend Engine (Svelte)
+
+Framework: Svelte (compiled via Vite).
+
+Role: Acts purely as a rendering engine and state machine. It reads the compiled-schema.json, evaluates the render_if conditional strings against the user's current answers, and dynamically renders the appropriate UI components (Select buttons, Yes/No toggles, Info screens).
+
+Output: Compiles to static HTML/JS/CSS, making it incredibly lightweight and easy to host on any existing corporate web server (Linux/Apache, Windows/IIS).
+
+4.3. The Backend Proxy (Security & Integration)
+
+Requirement: The Svelte frontend must not communicate directly with the ITSM ticketing tool (e.g., ServiceNow, Jira) to prevent exposing corporate API keys in the browser.
+
+Solution: A thin backend proxy (built in PHP or Node.js, depending on server environment) will be deployed alongside the frontend.
+
+Flow: Svelte sends the final JSON payload to the Proxy $\rightarrow$ The Proxy authenticates using hidden environment variables $\rightarrow$ The Proxy calls the ITSM API to generate the ticket and returns a success status.
+
+5. Workflow Logic Mapping (Based on Provided Diagrams)
+
+Developers must implement logic capable of handling the following flowchart structures:
+
+5.1. Global Routing (SL1)
+
+Context Gathering: Determines Reporter Identity $\rightarrow$ Location $\rightarrow$ Target System.
+
+Master Router: The "Which system?" (Jaký systém) question dictates which sub-module (e.g., LKW Control) is loaded next.
+
+5.2. System Sub-Flow: LKW Control (SL2)
+
+Environment Context: Asks Use Case (Gate Security vs. Internal Logistics) and Device Type.
+
+Symptom Router: Asks "What is broken?" (Co nefunguje). This is the trigger for the deep-dive diagnostics. Selecting "Telematics Outage" (Výpadek telematiky) triggers the SL3 flow.
+
+5.3. Deep-Dive Diagnostics: Telematics Outage (SL3)
+
+Sequential Logic: A series of Boolean (Yes/No) questions:
+
+Is there a registered operator outage? (If Yes $\rightarrow$ Route to Mobile Phones Support).
+
+Are data active? (If No $\rightarrow$ Route to NTT Data Service Desk).
+
+Is airplane mode on? (If Yes $\rightarrow$ Route to NTT Data Service Desk).
+
+Do other devices have the same issue? (Determines if it is a single-device failure or a global outage, routing to Logistics Systems Support).
+
+6. Implementation Phases
+
+Phase 1 (Core Engine): Develop the YAML stitcher, the Svelte dynamic rendering engine, and the Back/Next navigation state management.
+
+Phase 2 (Logic Transcription): Transcribe SL1, SL2, and SL3 PowerPoint diagrams into the modular YAML structure.
+
+Phase 3 (Integration): Develop the backend proxy (PHP/Node) and establish the API connection to the target ITSM tool. Implement Active Directory/SSO user mapping.
+
+Phase 4 (UAT & Deployment): User Acceptance Testing with logistics managers, followed by production deployment.

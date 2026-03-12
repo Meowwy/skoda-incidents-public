@@ -7,59 +7,17 @@
       "source": "active_directory"
     },
     {
-      "id": "oblast",
-      "type": "select",
-      "question": "Oblast",
-      "options": [
-        "Logistika",
-        "XXX",
-        "YYY"
-      ]
-    },
-    {
-      "id": "podoblast",
-      "type": "select",
-      "question": "Podoblast",
-      "options": [
-        "Inhouse - Škoda auto",
-        "Inbound",
-        "Outbound"
-      ]
-    },
-    {
-      "id": "lokalita",
-      "type": "select",
-      "question": "Odkud se nahlašuje?",
-      "options": [
-        "MB",
-        "KV",
-        "VR",
-        "Teplice",
-        "EDL MB",
-        "EDL KV"
-      ]
-    },
-    {
-      "id": "origin_dead_end",
-      "type": "info",
-      "question": "Zastavení procesu",
-      "description": "Pro toto místo prosím přímo kontaktujte Dispečera.",
-      "render_if": "origin_location == 'Externí firma'",
-      "action": "stop"
-    },
-    {
       "id": "system",
       "type": "select",
       "question": "Jaký systém má výpadek?",
       "options": [
+        "LKW Control",
         "HOD",
         "iTLS",
         "LOGIS",
         "INEAS",
-        "LKW Control",
         "SAP"
-      ],
-      "render_if": "origin_location != 'Externí firma'"
+      ]
     },
     {
       "id": "lkw_purpose",
@@ -177,6 +135,169 @@
           "impact": 2,
           "can_close": "Ne",
           "backup_strategy": "Není známa (krizový stav)"
+        }
+      }
+    },
+    {
+      "id": "hod_purpose",
+      "type": "select",
+      "question": "K čemu se HOD používá?",
+      "options": [
+        "Příjem zboží",
+        "Vyskladnění",
+        "Inventura",
+        "Něco jiného"
+      ],
+      "render_if": "system == 'HOD'"
+    },
+    {
+      "id": "hod_purpose_dead_end",
+      "type": "info",
+      "question": "Mimo standardní proces",
+      "description": "Kontaktujte svého nadřízeného.",
+      "render_if": "system == 'HOD' && hod_purpose == 'Něco jiného'",
+      "action": "stop"
+    },
+    {
+      "id": "hod_device",
+      "type": "select",
+      "question": "Jaké zařízení používáte?",
+      "options": [
+        "Ruční terminál (HHT)",
+        "Tablet",
+        "PC stanice"
+      ],
+      "render_if": "system == 'HOD' && hod_purpose != 'Něco jiného'"
+    },
+    {
+      "id": "hod_symptom",
+      "type": "select",
+      "question": "Co přesně nefunguje?",
+      "options": [
+        "Aplikace se nespustí",
+        "Chyba při skenování",
+        "Ztráta připojení",
+        "Nesprávná data"
+      ],
+      "render_if": "system == 'HOD' && hod_purpose != 'Něco jiného'"
+    },
+    {
+      "id": "diag_hod_wifi",
+      "type": "boolean",
+      "question": "Je zařízení připojeno k Wi-Fi?",
+      "render_if": "hod_symptom == 'Ztráta připojení'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Výpadek Wi-Fi připojení",
+          "resolver_group": "NETWORK Support SKODA",
+          "impact": 2,
+          "can_close": "Ano",
+          "backup_strategy": "Restart zařízení a opětovné připojení k síti"
+        }
+      }
+    },
+    {
+      "id": "diag_hod_other_devices",
+      "type": "boolean",
+      "question": "Mají ostatní zařízení stejný problém?",
+      "render_if": "hod_symptom == 'Ztráta připojení' && diag_hod_wifi == true",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Globální výpadek sítě",
+          "resolver_group": "NETWORK Support SKODA",
+          "impact": 1,
+          "can_close": "Ne",
+          "backup_strategy": "Manuální záznam na papír"
+        }
+      },
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Výpadek jednoho zařízení",
+          "resolver_group": "AMS NTT Data Service Desk",
+          "impact": 3,
+          "can_close": "Ano",
+          "backup_strategy": "Použít náhradní zařízení"
+        }
+      }
+    },
+    {
+      "id": "diag_hod_restart",
+      "type": "boolean",
+      "question": "Pomohl restart zařízení?",
+      "render_if": "hod_symptom == 'Aplikace se nespustí'",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Dočasná chyba aplikace",
+          "resolver_group": "AMS NTT Data Service Desk",
+          "impact": 3,
+          "can_close": "Ano",
+          "backup_strategy": "Restart zařízení"
+        }
+      },
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Kritická chyba aplikace HOD",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 2,
+          "can_close": "Ne",
+          "backup_strategy": "Použít náhradní zařízení nebo PC stanici"
+        }
+      }
+    },
+    {
+      "id": "diag_hod_scan_barcode",
+      "type": "boolean",
+      "question": "Je čárový kód čitelný (nepoškozený)?",
+      "render_if": "hod_symptom == 'Chyba při skenování'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Poškozený čárový kód",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 3,
+          "can_close": "Ano",
+          "backup_strategy": "Ruční zadání kódu"
+        }
+      },
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Chyba skeneru zařízení",
+          "resolver_group": "AMS NTT Data Service Desk",
+          "impact": 2,
+          "can_close": "Ano",
+          "backup_strategy": "Použít náhradní zařízení"
+        }
+      }
+    },
+    {
+      "id": "diag_hod_data_sync",
+      "type": "boolean",
+      "question": "Byla provedena synchronizace dat?",
+      "render_if": "hod_symptom == 'Nesprávná data'",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Chyba datové synchronizace",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 2,
+          "can_close": "Ne",
+          "backup_strategy": "Ověřit data v SAP"
+        }
+      },
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Nesynchronizovaná data",
+          "resolver_group": "AMS NTT Data Service Desk",
+          "impact": 3,
+          "can_close": "Ano",
+          "backup_strategy": "Provést manuální synchronizaci"
         }
       }
     }
