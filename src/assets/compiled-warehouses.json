@@ -62,14 +62,6 @@
       ]
     },
     {
-      "name": "KV",
-      "warehouses": [
-        "K1",
-        "K4",
-        "K7"
-      ]
-    },
-    {
       "name": "KV EDL",
       "warehouses": [
         "H4",

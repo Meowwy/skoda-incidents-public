@@ -47,8 +47,5 @@ locations:
   - name: MB EDL
     warehouses: [DC1, HB1A, H3, H4, 10B, N6, LIAZ]
 
-  - name: KV
-    warehouses: [K1, K4, K7]
-
   - name: KV EDL
     warehouses: [H4, H6, H7]

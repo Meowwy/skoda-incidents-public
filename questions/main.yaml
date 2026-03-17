@@ -27,7 +27,6 @@ steps:
       - "LOGIS"
       - "INEAS-BMA"
       - "INEAS-MA"
-      - "SAP"
 
   # ==========================================
   # SYSTEM INCLUDES
