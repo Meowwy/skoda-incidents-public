@@ -8,19 +8,25 @@ steps:
   # 1. Kdo nahlašuje? (Automatically fetched, e.g., from AD)
   - id: user_id
     type: hidden
-    source:
-      active_directory
+    source: active_directory
 
   # 2. Jaký systém? (Which system?)
   - id: system
     type: select
     question: "Jaký systém má výpadek?"
     options:
-      - "LKW Control"
+      - "ANDON"
+      - "IMIS"
+      - "WMS KAKL"
+      - "WMS MAKL"
+      - "WMS U6A"
+      - "WMS U6C"
+      - "LKW Control x"
       - "HOD"
       - "iTLS"
       - "LOGIS"
-      - "INEAS"
+      - "INEAS-BMA"
+      - "INEAS-MA"
       - "SAP"
 
   # ==========================================

@@ -10,14 +10,14 @@ steps:
       - "Závodová ochrana (na bráně)"
       - "Interní logistika (PLO)"
       - "Něco jiného"
-    render_if: "system == 'LKW Control'"
+    render_if: "system == 'LKW Control x'"
 
   # Dead End from SL2 (Dashed red line "Kontaktujte nadřízeného")
   - id: lkw_purpose_dead_end
     type: info
     question: "Mimo standardní proces"
     description: "Kontaktujte svého nadřízeného."
-    render_if: "system == 'LKW Control' && lkw_purpose == 'Něco jiného'"
+    render_if: "system == 'LKW Control x' && lkw_purpose == 'Něco jiného'"
     action: stop
 
   # 5. Jaké zařízení? (Device)
@@ -30,7 +30,7 @@ steps:
       - "HDT"
       - "Systém LKWc"
       - "Syncro Supply Center"
-    render_if: "system == 'LKW Control' && lkw_purpose != 'Něco jiného'"
+    render_if: "system == 'LKW Control x' && lkw_purpose != 'Něco jiného'"
 
   # 6. Co nefunguje? (Main Symptom)
   - id: lkw_symptom
@@ -42,7 +42,7 @@ steps:
       - "Výpadek systému"
       - "Chyba v rozhraní"
       - "Prázdný seznam jízd"
-    render_if: "system == 'LKW Control' && lkw_purpose != 'Něco jiného'"
+    render_if: "system == 'LKW Control x' && lkw_purpose != 'Něco jiného'"
 
   # ==========================================
   # 🩺 DIAGNOSTIC INCLUDES (HOW TO ADD NEW DRILL-DOWNS)

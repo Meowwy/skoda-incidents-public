@@ -8,9 +8,11 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Define our entry point and output destination
-const ENTRY_FILE = path.resolve(__dirname, 'questions/main.yaml'); 
+// Define our entry points and output destinations
+const ENTRY_FILE = path.resolve(__dirname, 'questions/main.yaml');
 const OUTPUT_FILE = path.resolve(__dirname, 'src/assets/compiled-schema.json');
+const WAREHOUSES_FILE = path.resolve(__dirname, 'questions/warehouses.yaml');
+const WAREHOUSES_OUTPUT = path.resolve(__dirname, 'src/assets/compiled-warehouses.json');
 
 function stitchYaml(filePath) {
   console.log(`📄 Reading: ${path.relative(__dirname, filePath)}`);
@@ -61,3 +63,15 @@ if (!fs.existsSync(outputDir)) {
 // 3. Save the stitched JSON file
 fs.writeFileSync(OUTPUT_FILE, JSON.stringify(finalSchema, null, 2));
 console.log(`✅ Successfully compiled schema to: ${path.relative(__dirname, OUTPUT_FILE)}`);
+
+// 4. Compile warehouses YAML
+console.log(`📄 Reading: ${path.relative(__dirname, WAREHOUSES_FILE)}`);
+try {
+  const warehousesContent = fs.readFileSync(WAREHOUSES_FILE, 'utf8');
+  const warehousesData = yaml.load(warehousesContent);
+  fs.writeFileSync(WAREHOUSES_OUTPUT, JSON.stringify(warehousesData, null, 2));
+  console.log(`✅ Successfully compiled warehouses to: ${path.relative(__dirname, WAREHOUSES_OUTPUT)}`);
+} catch (error) {
+  console.error(`❌ Error processing warehouses:`, error.message);
+  process.exit(1);
+}

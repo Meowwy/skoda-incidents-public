@@ -1,5 +1,6 @@
 <script>
   import schemaData from "./assets/compiled-schema.json";
+  import warehousesData from "./assets/compiled-warehouses.json";
 
   let schema = schemaData;
 
@@ -20,18 +21,10 @@
   let finalResult = $state(null);
 
   // ==========================================
-  // STATIC DATA
+  // STATIC DATA (from compiled-warehouses.json)
   // ==========================================
-  const locations = ['MB', 'KV', 'VR', 'Teplice', 'EDL MB', 'EDL KV'];
-
-  const warehouseMap = {
-    'MB': ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8'],
-    'KV': ['K1', 'K2', 'K3', 'K4', 'K5', 'K6'],
-    'VR': ['V1', 'V2', 'V3'],
-    'Teplice': ['T1', 'T2'],
-    'EDL MB': ['EM1', 'EM2', 'EM3'],
-    'EDL KV': ['EK1', 'EK2'],
-  };
+  const locations = warehousesData.locations.map(l => l.name);
+  const warehouseMap = Object.fromEntries(warehousesData.locations.map(l => [l.name, l.warehouses]));
 
   const subareas = ['Inhouse', 'Inbound', 'Outbound'];
 
@@ -761,7 +754,7 @@
 
   .system-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
     gap: 12px;
     flex: 1;
     align-content: start;
@@ -790,8 +783,8 @@
     box-shadow: 0 0 0 1px #4ba82e inset;
   }
   .system-logo {
-    width: 56px;
-    height: 56px;
+    width: 72px;
+    height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
