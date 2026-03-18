@@ -19,6 +19,7 @@
   let history = $state([]);
   let isFinished = $state(false);
   let finalResult = $state(null);
+  let selectedScenarioIndex = $state(0);
 
   // ==========================================
   // STATIC DATA (from compiled-warehouses.json)
@@ -37,6 +38,25 @@
   let currentStep = $derived(currentStepIndex >= 0 && currentStepIndex < schema.steps.length ? schema.steps[currentStepIndex] : null);
   let canProceedLocation = $derived(selectedWarehouse !== null);
 
+  // Reset scenario selection when navigating to a new diagnostic step
+  $effect(() => {
+    if (currentStep?.type === 'diagnostic') {
+      selectedScenarioIndex = 0;
+    }
+  });
+
+  // Trail of previously answered select steps (for drill-down UI)
+  let selectTrail = $derived.by(() => {
+    const trail = [];
+    for (const idx of history) {
+      const step = schema.steps[idx];
+      if (step.type === 'select') {
+        trail.push({ step, answer: answers[step.id] });
+      }
+    }
+    return trail;
+  });
+
   let breadcrumb = $derived.by(() => {
     const parts = [];
     if (selectedArea) parts.push(selectedArea);
@@ -46,12 +66,6 @@
     if (selectedSystem) parts.push(selectedSystem);
     if (currentStep) parts.push(currentStep.question.substring(0, 30) + (currentStep.question.length > 30 ? '...' : ''));
     return parts;
-  });
-
-  let canGoNext = $derived.by(() => {
-    if (!currentStep) return false;
-    if (currentStep.type === 'info') return true;
-    return answers[currentStep.id] !== undefined;
   });
 
   // ==========================================
@@ -145,10 +159,10 @@
     advanceToNextValidStep(sysIdx);
   }
 
-  function selectOption(value) {
-    if (currentStep) {
-      answers[currentStep.id] = value;
-    }
+  function selectAndAdvance(value) {
+    if (!currentStep) return;
+    answers[currentStep.id] = value;
+    goNext();
   }
 
   function goNext() {
@@ -363,8 +377,183 @@
         <div class="diagram-panel">
           <img src="/diagram/systems_diagram.png" alt="Schéma propojení systémů" class="diagram-img" />
         </div>
+      {:else if currentStep && currentStep.type === 'select'}
+        <!-- DRILL-DOWN MODE: horizontal columns for select steps -->
+        <div class="drilldown-panel">
+          <div class="drilldown-columns">
+            {#each selectTrail as item (item.step.id)}
+              <div class="drilldown-answered">
+                <span class="drilldown-label">{item.step.question}</span>
+                <span class="drilldown-value">{item.answer}</span>
+              </div>
+              <span class="drilldown-sep">&rsaquo;</span>
+            {/each}
+
+            <div class="drilldown-current">
+              <span class="drilldown-label">{currentStep.question}</span>
+              <div class="drilldown-options">
+                {#each currentStep.options as option, i (i)}
+                  {#if typeof option === 'string'}
+                    <button
+                      class="drilldown-option-btn"
+                      onclick={() => selectAndAdvance(option)}
+                    >
+                      {option}
+                    </button>
+                  {:else if option.group}
+                    <span class="option-group-label">{option.group}</span>
+                    {#each option.options as subOption (subOption)}
+                      <button
+                        class="drilldown-option-btn"
+                        onclick={() => selectAndAdvance(subOption)}
+                      >
+                        {subOption}
+                      </button>
+                    {/each}
+                  {/if}
+                {/each}
+              </div>
+            </div>
+          </div>
+
+          <div class="question-nav">
+            <button class="btn-nav btn-back" onclick={goBack}>Zpět</button>
+          </div>
+        </div>
+
+      {:else if currentStep && currentStep.type === 'diagnostic'}
+        <!-- DIAGNOSTIC MODE: numbered vertical tabs + two-part detail panel -->
+        <div class="diagnostic-panel">
+          {#if selectTrail.length > 0}
+            <div class="trail-summary">
+              {#each selectTrail as item, i (item.step.id)}
+                {#if i > 0}<span class="trail-sep">&rsaquo;</span>{/if}
+                <span class="trail-chip">{item.answer}</span>
+              {/each}
+            </div>
+          {/if}
+
+          <h2 class="diagnostic-heading">{currentStep.question}</h2>
+
+          <div class="diagnostic-layout">
+            <div class="scenario-tabs">
+              <span class="scenario-tabs-label">Doporučené pořadí kontroly</span>
+              {#each currentStep.scenarios as scenario, i (i)}
+                <button
+                  class="scenario-tab {selectedScenarioIndex === i ? 'active' : ''}"
+                  onclick={() => selectedScenarioIndex = i}
+                >
+                  <span class="scenario-tab-number">{i + 1}.</span>
+                  {scenario.title}
+                </button>
+              {/each}
+            </div>
+
+            {#if currentStep.scenarios[selectedScenarioIndex]}
+              {@const scenario = currentStep.scenarios[selectedScenarioIndex]}
+              <div class="scenario-detail">
+                <h3 class="scenario-title">
+                  <span class="scenario-title-number">{selectedScenarioIndex + 1}.</span>
+                  {scenario.title}
+                </h3>
+
+                <!-- UPPER: Diagnostic question -->
+                <div class="scenario-question-box">
+                  <p class="scenario-description">{scenario.description}</p>
+                </div>
+
+                <!-- LOWER: Two-column answer layout -->
+                <div class="answer-columns">
+                  <!-- OK side (all clear) -->
+                  <div class="answer-ok">
+                    <span class="answer-label-ok">{scenario.ok_answer}</span>
+                    <span class="answer-hint-ok">Pokračujte na další kontrolu</span>
+                  </div>
+
+                  <!-- Separator -->
+                  <div class="answer-separator">
+                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+                      <line x1="6" y1="6" x2="22" y2="22" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"/>
+                      <line x1="22" y1="6" x2="6" y2="22" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+
+                  <!-- NOK side (incident) -->
+                  <div class="answer-nok">
+                    <span class="answer-label-nok">{scenario.nok_answer}</span>
+
+                    {#if scenario.action}
+                      <div class="nok-action">
+                        <span class="nok-action-label">Doporučená akce</span>
+                        {scenario.action}
+                      </div>
+                    {/if}
+
+                    {#if scenario.resolutions && scenario.resolutions.length > 0}
+                      {#each scenario.resolutions as resolution, ri (ri)}
+                        <div class="resolution-card">
+                          <div class="resolution-details">
+                            {#if resolution.actual_defect}
+                              <div class="resolution-row">
+                                <span class="resolution-label">Zjištěná závada:</span>
+                                <span class="resolution-value">{resolution.actual_defect}</span>
+                              </div>
+                            {/if}
+                            {#if resolution.resolver_group}
+                              <div class="resolution-row">
+                                <span class="resolution-label">Resolver skupina:</span>
+                                <span class="resolution-value">{resolution.resolver_group}</span>
+                              </div>
+                            {/if}
+                            {#if resolution.impact}
+                              <div class="resolution-row">
+                                <span class="resolution-label">Impact:</span>
+                                <span class="resolution-value">{resolution.impact}</span>
+                              </div>
+                            {/if}
+                            {#if resolution.backup_strategy}
+                              <div class="resolution-backup">
+                                <strong>Záložní strategie:</strong> {resolution.backup_strategy}
+                              </div>
+                            {/if}
+                          </div>
+                        </div>
+                      {/each}
+
+                      <div class="scenario-actions">
+                        <button class="btn-submit" disabled title="Připravujeme">
+                          Odeslat incident
+                          <span class="btn-badge">Připravujeme</span>
+                        </button>
+                      </div>
+                    {:else}
+                      <div class="resolution-selfclose">
+                        Eskalace není potřeba — incident lze uzavřít po provedení akce.
+                      </div>
+                    {/if}
+                  </div>
+                </div>
+              </div>
+            {/if}
+          </div>
+
+          <div class="question-nav">
+            <button class="btn-nav btn-back" onclick={goBack}>Zpět</button>
+          </div>
+        </div>
+
       {:else if currentStep}
+        <!-- FALLBACK: normal panel for boolean/info steps -->
         <div class="questions-panel">
+          {#if selectTrail.length > 0}
+            <div class="trail-summary">
+              {#each selectTrail as item, i (item.step.id)}
+                {#if i > 0}<span class="trail-sep">&rsaquo;</span>{/if}
+                <span class="trail-chip">{item.answer}</span>
+              {/each}
+            </div>
+          {/if}
+
           <h2 class="question-text">{currentStep.question}</h2>
 
           {#if currentStep.description}
@@ -372,39 +561,17 @@
           {/if}
 
           <div class="options-area">
-            {#if currentStep.type === 'select'}
-              {#each currentStep.options as option, i (i)}
-                {#if typeof option === 'string'}
-                  <button
-                    class="option-btn {answers[currentStep.id] === option ? 'selected' : ''}"
-                    onclick={() => selectOption(option)}
-                  >
-                    {option}
-                  </button>
-                {:else if option.group}
-                  <span class="option-group-label">{option.group}</span>
-                  {#each option.options as subOption (subOption)}
-                    <button
-                      class="option-btn {answers[currentStep.id] === subOption ? 'selected' : ''}"
-                      onclick={() => selectOption(subOption)}
-                    >
-                      {subOption}
-                    </button>
-                  {/each}
-                {/if}
-              {/each}
-
-            {:else if currentStep.type === 'boolean'}
+            {#if currentStep.type === 'boolean'}
               <div class="boolean-buttons">
                 <button
                   class="option-btn bool-btn {answers[currentStep.id] === true ? 'selected' : ''}"
-                  onclick={() => selectOption(true)}
+                  onclick={() => selectAndAdvance(true)}
                 >
                   Ano
                 </button>
                 <button
                   class="option-btn bool-btn {answers[currentStep.id] === false ? 'selected' : ''}"
-                  onclick={() => selectOption(false)}
+                  onclick={() => selectAndAdvance(false)}
                 >
                   Ne
                 </button>
@@ -421,13 +588,11 @@
             <button class="btn-nav btn-back" onclick={goBack}>
               Zpět
             </button>
-            <button
-              class="btn-nav btn-next"
-              disabled={!canGoNext}
-              onclick={goNext}
-            >
-              Další
-            </button>
+            {#if currentStep.type === 'info'}
+              <button class="btn-nav btn-next" onclick={goNext}>
+                Pokračovat
+              </button>
+            {/if}
           </div>
         </div>
       {/if}

@@ -1,70 +1,68 @@
-# File: /lkw_control_telematics_outage.yaml
-# Description: SL3 Decision tree for Telematics Outage
+# Soubor: systems/lkw_control/lkw_control_telematics_outage.yaml
+# Popis: Diagnostika výpadku telematiky v systému LKW Control
 
 steps:
-  # Ensure these only run if we reached this specific symptom
-  # Q1: Je hlášený / registrovaný výpadek u operátora?
-  - id: diag_tel_operator
-    type: boolean
-    question: "Je hlášený / registrovaný výpadek u operátora?"
+  - id: tel_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Výpadek telematiky"
     render_if: "lkw_symptom == 'Výpadek telematiky'"
-    on_true:
-      action: stop
-      incident_data:
-        actual_defect: "Výpadek operátora"
-        resolver_group: "MOBILE PHONES Support SKODA"
-        impact: 2
-        can_close: "Ano"
-        backup_strategy: "Není"
-    # If false, Svelte simply skips this and goes to the next question automatically
+    scenarios:
+      # -----------------------------------------
+      - title: "Výpadek u operátora"
+        description: "Je u mobilního operátora hlášený nebo registrovaný výpadek sítě?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Informujte uživatele, že se jedná o výpadek na straně operátora. Čekejte na obnovení."
+        resolutions:
+          - actual_defect: "Výpadek operátora"
+            resolver_group: "MOBILE PHONES Support SKODA"
+            impact: 2
+            backup_strategy: "Není"
 
-  # Q2: Jsou aktivní data? (Dashed red line means 'Ne' leads to defect)
-  - id: diag_tel_data
-    type: boolean
-    question: "Jsou aktivní data?"
-    # Render only if the previous question was explicitly answered 'false'
-    render_if: "lkw_symptom == 'Výpadek telematiky' && diag_tel_operator == false"
-    on_false:
-      action: stop
-      incident_data:
-        actual_defect: "Chybné nastavení"
-        resolver_group: "AMS NTT Data Service Desk"
-        impact: 2
-        can_close: "Ano"
-        backup_strategy: "Správné nastavení přes help desk"
+      # -----------------------------------------
+      - title: "Neaktivní mobilní data"
+        description: "Jsou na telematice aktivní mobilní data?"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "Kontaktujte help desk pro správné nastavení mobilních dat na zařízení."
+        resolutions:
+          - actual_defect: "Chybné nastavení"
+            resolver_group: "AMS NTT Data Service Desk"
+            impact: 2
+            backup_strategy: "Správné nastavení přes help desk"
 
-  # Q3: Je zapnutý režim letadlo?
-  - id: diag_tel_airplane
-    type: boolean
-    question: "Je zapnutý režim letadlo?"
-    render_if: "lkw_symptom == 'Výpadek telematiky' && diag_tel_data == true"
-    on_true:
-      action: stop
-      incident_data:
-        actual_defect: "Chybné nastavení"
-        resolver_group: "AMS NTT Data Service Desk"
-        impact: 2
-        can_close: "Ano"
-        backup_strategy: "Správné nastavení přes help desk"
+      # -----------------------------------------
+      - title: "Zapnutý režim letadlo"
+        description: "Je na telematice zapnutý režim letadlo?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Řekněte uživateli, aby vypnul režim letadlo v nastavení zařízení."
+        resolutions:
+          - actual_defect: "Chybné nastavení"
+            resolver_group: "AMS NTT Data Service Desk"
+            impact: 2
+            backup_strategy: "Správné nastavení přes help desk"
 
-  # Q4: Další telematiky mají stejnou závadu?
-  - id: diag_tel_multiple
-    type: boolean
-    question: "Mají další telematiky stejnou závadu?"
-    render_if: "lkw_symptom == 'Výpadek telematiky' && diag_tel_airplane == false"
-    on_false:
-      action: stop
-      incident_data:
-        actual_defect: "Nefunkčnost 1 telematiky"
-        resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
-        impact: 2
-        can_close: "Ano"
-        backup_strategy: "Výměna telematiky"
-    on_true:
-      action: stop
-      incident_data:
-        actual_defect: "Globální výpadek telematiky"
-        resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
-        impact: 2
-        can_close: "Ne"
-        backup_strategy: "Není známa (krizový stav)"
+      # -----------------------------------------
+      - title: "Výpadek jedné telematiky"
+        description: "Fungují ostatní telematiky správně?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Jedná se o závadu jednoho zařízení. Požádejte uživatele, aby použil jiné zařízení."
+        resolutions:
+          - actual_defect: "Nefunkčnost 1 telematiky"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Výměna telematiky"
+
+      # -----------------------------------------
+      - title: "Výpadek více telematik"
+        description: "Vykazují stejnou závadu i další telematiky?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Jedná se o rozsáhlý výpadek. Zajistěte krizový režim dle pokynů."
+        resolutions:
+          - actual_defect: "Globální výpadek telematiky"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Není známa (krizový stav)"

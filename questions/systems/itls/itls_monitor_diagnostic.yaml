@@ -1,32 +1,34 @@
 # Soubor: systems/itls/itls_monitor_diagnostic.yaml
 # Popis: Diagnostika pro příznak "Nefunkční výstupy iTLS monitoru"
 #
-# Tok:
-#   1. Funguje na jiném zařízení / PC?
-#      Ne → Chyba nastavení monitorů (LOGISTICKE SYSTEMY)
-#      Ano → Vada monitoru (VYROBNI KZ XX)
+# Rozděleno na dva scénáře (každý vede max k jednomu incidentu).
 
 steps:
-  # ------------------------------------------
-  # Otázka: Funguje na jiném zařízení / PC?
-  # Ne → chyba nastavení, eskalace na LOGISTICKE SYSTEMY
-  # Ano → vada monitoru, eskalace na VYROBNI KZ XX
-  # ------------------------------------------
-  - id: monitor_other_device
-    type: boolean
-    question: "Funguje to na jiném zařízení / PC?"
+  - id: monitor_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nefunkční výstupy iTLS monitoru"
     render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční výstupy iTLS monitoru'"
-    on_true:
-      action: stop
-      incident_data:
-        actual_defect: "Vada monitoru"
-        resolver_group: "VYROBNI KZ XX Support SKODA"
-        impact: 4
-        backup_strategy: "Zvýšený monitoring ze strany leitstandu"
-    on_false:
-      action: stop
-      incident_data:
-        actual_defect: "Chyba nastavení monitorů"
-        resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
-        impact: 4
-        backup_strategy: "Zvýšený monitoring ze strany leitstandu"
+    scenarios:
+      # -----------------------------------------
+      - title: "Funguje na jiném PC — vada monitoru"
+        description: "Funguje zobrazení dat z iTLS na jiném PC nebo monitoru?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Monitor je vadný. Zajistěte zvýšený monitoring ze strany leitstandu do výměny monitoru."
+        resolutions:
+          - actual_defect: "Vada monitoru"
+            resolver_group: "VYROBNI KZ XX Support SKODA"
+            impact: 4
+            backup_strategy: "Zvýšený monitoring ze strany leitstandu"
+
+      # -----------------------------------------
+      - title: "Nefunguje ani na jiném PC — chyba nastavení"
+        description: "Nefunguje zobrazení dat z iTLS na žádném PC ani monitoru?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Jedná se o chybu nastavení monitorů. Zajistěte zvýšený monitoring ze strany leitstandu."
+        resolutions:
+          - actual_defect: "Chyba nastavení monitorů"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 4
+            backup_strategy: "Zvýšený monitoring ze strany leitstandu"
