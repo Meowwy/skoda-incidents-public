@@ -145,6 +145,272 @@
       }
     },
     {
+      "id": "itls_purpose",
+      "type": "select",
+      "question": "K čemu se systém iTLS používá?",
+      "options": [
+        "Ekonory (VZV)",
+        "Tahače",
+        "Evidence příjmu materiálu",
+        "Mobilní light-LOGIS",
+        "Kontaktujte Leitstanda"
+      ],
+      "render_if": "system == 'iTLS'"
+    },
+    {
+      "id": "itls_purpose_dead_end",
+      "type": "info",
+      "question": "Kontaktujte Leitstanda",
+      "description": "Tento případ nelze řešit přes tento formulář. Obraťte se na Leitstanda.",
+      "render_if": "system == 'iTLS' && itls_purpose == 'Kontaktujte Leitstanda'",
+      "action": "stop"
+    },
+    {
+      "id": "itls_app",
+      "type": "hidden",
+      "value": "SLS",
+      "render_if": "system == 'iTLS' && itls_purpose == 'Ekonory (VZV)'"
+    },
+    {
+      "id": "itls_app",
+      "type": "hidden",
+      "value": "ZLS",
+      "render_if": "system == 'iTLS' && itls_purpose == 'Tahače'"
+    },
+    {
+      "id": "itls_app",
+      "type": "hidden",
+      "value": "ELS",
+      "render_if": "system == 'iTLS' && itls_purpose == 'Evidence příjmu materiálu'"
+    },
+    {
+      "id": "itls_app",
+      "type": "hidden",
+      "value": "InLOG@WEB",
+      "render_if": "system == 'iTLS' && itls_purpose == 'Mobilní light-LOGIS'"
+    },
+    {
+      "id": "itls_device",
+      "type": "select",
+      "question": "Jaké zařízení používáte?",
+      "options": [
+        "HDT",
+        "PC"
+      ],
+      "render_if": "system == 'iTLS' && itls_purpose != 'Kontaktujte Leitstanda'"
+    },
+    {
+      "id": "itls_symptom",
+      "type": "select",
+      "question": "Co přesně nefunguje?",
+      "options": [
+        "Nefunkční HDT",
+        "Nefunkční tisk",
+        {
+          "group": "Nefunkční iTLS",
+          "options": [
+            "Nemožnost přihlášení",
+            "Nelze zadat požadovanou hodnotu",
+            "Nefunkční výstupy iTLS monitoru",
+            "Nepřetékají data/zakázky",
+            "Nestandardní chování",
+            "Výpadek systému",
+            "Zablokované pracoviště",
+            "Chyba v rozhraní"
+          ]
+        }
+      ],
+      "render_if": "system == 'iTLS' && itls_purpose != 'Kontaktujte Leitstanda'"
+    },
+    {
+      "id": "hdt_other_device",
+      "type": "boolean",
+      "question": "Funguje to na jiném zařízení?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Globální výpadek SA/VW",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 1,
+          "backup_strategy": "Přepnout na B závěsky"
+        }
+      }
+    },
+    {
+      "id": "hdt_wifi",
+      "type": "boolean",
+      "question": "Svítí vlevo nahoře ikona WIFI?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Nefunkční WIFI",
+          "resolver_group": "NETWORK Support SKODA",
+          "impact": 1,
+          "backup_strategy": "Přepnout na B závěsky"
+        }
+      }
+    },
+    {
+      "id": "hdt_battery",
+      "type": "boolean",
+      "question": "Svítí vpravo nahoře ikona stavu baterie?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Vybita baterie",
+          "backup_strategy": "Výměna baterie nebo výměna HDT"
+        }
+      }
+    },
+    {
+      "id": "hdt_power",
+      "type": "boolean",
+      "question": "Jde zapnout?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Nefunkční HDT",
+          "resolver_group": "VYROBNI KZ XX Support SKODA",
+          "impact": 4,
+          "backup_strategy": "Restartování"
+        }
+      }
+    },
+    {
+      "id": "hdt_normal",
+      "type": "boolean",
+      "question": "Funguje standardně?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Nefunkční HDT",
+          "resolver_group": "VYROBNI KZ XX Support SKODA",
+          "impact": 4,
+          "backup_strategy": "Držet červené tlačítko v pravém horním rohu klávesnice"
+        }
+      }
+    },
+    {
+      "id": "hdt_numbers",
+      "type": "boolean",
+      "question": "Jdou zadávat číslice?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+    },
+    {
+      "id": "hdt_alfa",
+      "type": "boolean",
+      "question": "Svítí tlačítko ALFA?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT' && hdt_numbers == false"
+    },
+    {
+      "id": "hdt_alfa_instruction",
+      "type": "info",
+      "question": "Stiskněte tlačítko ALFA",
+      "description": "Stiskněte tlačítko ALFA na klávesnici HDT a pokračujte.",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT' && hdt_numbers == false && hdt_alfa == false"
+    },
+    {
+      "id": "hdt_certificate",
+      "type": "boolean",
+      "question": "Po spuštění iTLS se spustí certifikát?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'",
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Nefunkční HDT",
+          "resolver_group": "VYROBNI KZ XX Support SKODA",
+          "impact": 4
+        }
+      }
+    },
+    {
+      "id": "hdt_certificate_resolve",
+      "type": "info",
+      "question": "Potvrďte ok a přihlaste se znovu",
+      "description": "Po potvrzení certifikátu se znovu přihlaste do systému iTLS. Incident lze uzavřít.",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční HDT' && hdt_certificate == true",
+      "action": "stop"
+    },
+    {
+      "id": "monitor_other_device",
+      "type": "boolean",
+      "question": "Funguje to na jiném zařízení / PC?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nefunkční výstupy iTLS monitoru'",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Vada monitoru",
+          "resolver_group": "VYROBNI KZ XX Support SKODA",
+          "impact": 4,
+          "backup_strategy": "Zvýšený monitoring ze strany leitstandu"
+        }
+      },
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Chyba nastavení monitorů",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 4,
+          "backup_strategy": "Zvýšený monitoring ze strany leitstandu"
+        }
+      }
+    },
+    {
+      "id": "nchov_logout",
+      "type": "boolean",
+      "question": "Dochází k opětovnému odhlašování?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nestandardní chování'",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Špatně nastaveno",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 3
+        }
+      }
+    },
+    {
+      "id": "nchov_release",
+      "type": "boolean",
+      "question": "Došlo v poslední době k novému releasu iTLS?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nestandardní chování'",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Opakované odhlašování z iTLS",
+          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+          "impact": 3
+        }
+      }
+    },
+    {
+      "id": "nchov_operations",
+      "type": "boolean",
+      "question": "Zobrazují se nestandardní operace?",
+      "render_if": "system == 'iTLS' && itls_symptom == 'Nestandardní chování'",
+      "on_true": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Špatně nastaveno",
+          "resolver_group": "Key user",
+          "impact": 3
+        }
+      },
+      "on_false": {
+        "action": "stop",
+        "incident_data": {
+          "actual_defect": "Špatně nastaveno",
+          "resolver_group": "Key user",
+          "impact": 3
+        }
+      }
+    },
+    {
       "id": "hod_purpose",
       "type": "select",
       "question": "K čemu se HOD používá?",

@@ -1,0 +1,59 @@
+# Soubor: systems/itls/itls_nestandardni_diagnostic.yaml
+# Popis: Diagnostika pro příznak "Nestandardní chování" HDT v systému iTLS
+#
+# Tok:
+#   1. Dochází k opětovnému odhlašování?    Ano → Špatně nastaveno (LOGISTICKE SYSTEMY)
+#   2. Došlo k novému releasu iTLS?         Ano → Opakované odhlašování (LOGISTICKE SYSTEMY)
+#   3. Zobrazují se nestandardní operace?   Ano i Ne → Špatně nastaveno (Key user)
+
+steps:
+  # ------------------------------------------
+  # Otázka 1: Dochází k opětovnému odhlašování?
+  # Ano → špatně nastaveno, LOGISTICKE SYSTEMY (lze uzavřít)
+  # ------------------------------------------
+  - id: nchov_logout
+    type: boolean
+    question: "Dochází k opětovnému odhlašování?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nestandardní chování'"
+    on_true:
+      action: stop
+      incident_data:
+        actual_defect: "Špatně nastaveno"
+        resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+        impact: 3
+
+  # ------------------------------------------
+  # Otázka 2: Došlo v poslední době k novému releasu iTLS?
+  # Ano → opakované odhlašování z iTLS, LOGISTICKE SYSTEMY
+  # ------------------------------------------
+  - id: nchov_release
+    type: boolean
+    question: "Došlo v poslední době k novému releasu iTLS?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nestandardní chování'"
+    on_true:
+      action: stop
+      incident_data:
+        actual_defect: "Opakované odhlašování z iTLS"
+        resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+        impact: 3
+
+  # ------------------------------------------
+  # Otázka 3: Zobrazují se nestandardní operace?
+  # Ano i Ne → špatně nastaveno, Key user opraví nastavení
+  # ------------------------------------------
+  - id: nchov_operations
+    type: boolean
+    question: "Zobrazují se nestandardní operace?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nestandardní chování'"
+    on_true:
+      action: stop
+      incident_data:
+        actual_defect: "Špatně nastaveno"
+        resolver_group: "Key user"
+        impact: 3
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Špatně nastaveno"
+        resolver_group: "Key user"
+        impact: 3

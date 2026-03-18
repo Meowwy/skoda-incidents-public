@@ -1,16 +1,15 @@
-# File: main.yaml
-# Description: The main entry point for the ITSM Triage Wizard
-# Note: Area, Sub-area, Location, and Warehouse selection is handled by the dashboard UI.
-# The YAML schema starts from system selection onwards.
+# Popis: Hlavní vstupní bod
+# Poznámka: Oblast (area), podoblast (sub-area), lokace (location), a sklady (warehouse) výběr je přes UI.
+# V YAML schématech jsou definované otázky od kategoritace systému dále.
 version: 1.0
 
 steps:
-  # 1. Kdo nahlašuje? (Automatically fetched, e.g., from AD)
+  # 1. Kdo nahlašuje a odkud se nahlašuje? (vezme se automaticky z AD, hala se vybírá z warehouses.yaml)
   - id: user_id
     type: hidden
     source: active_directory
 
-  # 2. Jaký systém? (Which system?)
+  # 2. Jaký systém?
   - id: system
     type: select
     question: "Jaký systém má výpadek?"
@@ -34,6 +33,9 @@ steps:
 
   # LKW Control branch
   - $include: "./systems/lkw_control/lkw_control.yaml"
+
+  # iTLS branch
+  - $include: "./systems/itls/itls.yaml"
 
   # HOD branch (mock)
   - $include: "./systems/hod/hod.yaml"

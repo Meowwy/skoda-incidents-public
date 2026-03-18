@@ -1,0 +1,32 @@
+# Soubor: systems/itls/itls_monitor_diagnostic.yaml
+# Popis: Diagnostika pro příznak "Nefunkční výstupy iTLS monitoru"
+#
+# Tok:
+#   1. Funguje na jiném zařízení / PC?
+#      Ne → Chyba nastavení monitorů (LOGISTICKE SYSTEMY)
+#      Ano → Vada monitoru (VYROBNI KZ XX)
+
+steps:
+  # ------------------------------------------
+  # Otázka: Funguje na jiném zařízení / PC?
+  # Ne → chyba nastavení, eskalace na LOGISTICKE SYSTEMY
+  # Ano → vada monitoru, eskalace na VYROBNI KZ XX
+  # ------------------------------------------
+  - id: monitor_other_device
+    type: boolean
+    question: "Funguje to na jiném zařízení / PC?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční výstupy iTLS monitoru'"
+    on_true:
+      action: stop
+      incident_data:
+        actual_defect: "Vada monitoru"
+        resolver_group: "VYROBNI KZ XX Support SKODA"
+        impact: 4
+        backup_strategy: "Zvýšený monitoring ze strany leitstandu"
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Chyba nastavení monitorů"
+        resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+        impact: 4
+        backup_strategy: "Zvýšený monitoring ze strany leitstandu"

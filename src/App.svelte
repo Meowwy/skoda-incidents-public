@@ -94,7 +94,9 @@
       }
 
       if (stepToCheck.type === 'hidden') {
-        answers[stepToCheck.id] = 'system_user_123';
+        if (evaluateCondition(stepToCheck.render_if, answers)) {
+          answers[stepToCheck.id] = stepToCheck.value ?? 'system_user_123';
+        }
         nextIndex++;
         continue;
       }
@@ -371,13 +373,25 @@
 
           <div class="options-area">
             {#if currentStep.type === 'select'}
-              {#each currentStep.options as option (option)}
-                <button
-                  class="option-btn {answers[currentStep.id] === option ? 'selected' : ''}"
-                  onclick={() => selectOption(option)}
-                >
-                  {option}
-                </button>
+              {#each currentStep.options as option, i (i)}
+                {#if typeof option === 'string'}
+                  <button
+                    class="option-btn {answers[currentStep.id] === option ? 'selected' : ''}"
+                    onclick={() => selectOption(option)}
+                  >
+                    {option}
+                  </button>
+                {:else if option.group}
+                  <span class="option-group-label">{option.group}</span>
+                  {#each option.options as subOption (subOption)}
+                    <button
+                      class="option-btn {answers[currentStep.id] === subOption ? 'selected' : ''}"
+                      onclick={() => selectOption(subOption)}
+                    >
+                      {subOption}
+                    </button>
+                  {/each}
+                {/if}
               {/each}
 
             {:else if currentStep.type === 'boolean'}
@@ -429,13 +443,21 @@
 
         {#if finalResult}
           <div class="result-row">
-            <span class="result-label">Resolver skupina:</span>
-            <span class="result-value">{finalResult.resolver_group}</span>
-          </div>
-          <div class="result-row">
             <span class="result-label">Zjištěná závada:</span>
             <span class="result-value">{finalResult.actual_defect}</span>
           </div>
+          {#if finalResult.resolver_group}
+            <div class="result-row">
+              <span class="result-label">Resolver skupina:</span>
+              <span class="result-value">{finalResult.resolver_group}</span>
+            </div>
+          {/if}
+          {#if finalResult.impact}
+            <div class="result-row">
+              <span class="result-label">Impact:</span>
+              <span class="result-value">{finalResult.impact}</span>
+            </div>
+          {/if}
           {#if finalResult.backup_strategy}
             <div class="result-backup">
               <strong>Záložní strategie:</strong> {finalResult.backup_strategy}

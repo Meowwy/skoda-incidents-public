@@ -1,0 +1,142 @@
+# Soubor: systems/itls/itls_hdt_diagnostic.yaml
+# Popis: Diagnostika pro příznak "Nefunkční HDT" v systému iTLS
+#
+# Tok otázek (ano = pokračuj na další, ne = zastaví a určí závadu):
+#   1. Funguje to na jiném zařízení?        Ne → Globální výpadek SA/VW
+#   2. Svítí ikona WIFI?                    Ne → Nefunkční WIFI
+#   3. Svítí ikona baterie?                 Ne → Vybita baterie
+#   4. Jde zapnout?                         Ne → Nefunkční HDT (restartování)
+#   5. Funguje standardně?                  Ne → Nefunkční HDT (červené tlačítko)
+#   6. Jdou zadávat číslice?                Ne → zeptej se na tlačítko ALFA
+#   7. Svítí tlačítko ALFA?                 Ne → instrukce: stiskni ALFA
+#   8. Spustí se certifikát?                Ano → přihlas se znovu, Ne → ticket
+
+steps:
+  # ------------------------------------------
+  # Otázka 1: Funguje to na jiném zařízení?
+  # Ne → globální výpadek, eskalace na LOGISTICKE SYSTEMY
+  # ------------------------------------------
+  - id: hdt_other_device
+    type: boolean
+    question: "Funguje to na jiném zařízení?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Globální výpadek SA/VW"
+        resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+        impact: 1
+        backup_strategy: "Přepnout na B závěsky"
+
+  # ------------------------------------------
+  # Otázka 2: Svítí vlevo nahoře ikona WIFI?
+  # Ne → problém se sítí, bez řešitelské skupiny (řeší uživatel)
+  # ------------------------------------------
+  - id: hdt_wifi
+    type: boolean
+    question: "Svítí vlevo nahoře ikona WIFI?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Nefunkční WIFI"
+        resolver_group: "NETWORK Support SKODA"
+        impact: 1
+        backup_strategy: "Přepnout na B závěsky"
+
+  # ------------------------------------------
+  # Otázka 3: Svítí vpravo nahoře ikona stavu baterie?
+  # Ne → vybitá baterie, uživatel vymění baterii nebo HDT
+  # ------------------------------------------
+  - id: hdt_battery
+    type: boolean
+    question: "Svítí vpravo nahoře ikona stavu baterie?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Vybita baterie"
+        backup_strategy: "Výměna baterie nebo výměna HDT"
+
+  # ------------------------------------------
+  # Otázka 4: Jde zapnout?
+  # Ne → nefunkční HDT, eskalace na VYROBNI KZ XX
+  # ------------------------------------------
+  - id: hdt_power
+    type: boolean
+    question: "Jde zapnout?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Nefunkční HDT"
+        resolver_group: "VYROBNI KZ XX Support SKODA"
+        impact: 4
+        backup_strategy: "Restartování"
+
+  # ------------------------------------------
+  # Otázka 5: Funguje standardně?
+  # Ne → nefunkční HDT, eskalace na VYROBNI KZ XX
+  # ------------------------------------------
+  - id: hdt_normal
+    type: boolean
+    question: "Funguje standardně?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Nefunkční HDT"
+        resolver_group: "VYROBNI KZ XX Support SKODA"
+        impact: 4
+        backup_strategy: "Držet červené tlačítko v pravém horním rohu klávesnice"
+
+  # ------------------------------------------
+  # Otázka 6: Jdou zadávat číslice?
+  # Ano → přeskoč na certifikát (otázka 8)
+  # Ne → zeptej se na tlačítko ALFA (otázka 7)
+  # ------------------------------------------
+  - id: hdt_numbers
+    type: boolean
+    question: "Jdou zadávat číslice?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+
+  # ------------------------------------------
+  # Otázka 7: Svítí tlačítko ALFA?
+  # Zobrazí se jen pokud číslice nejdou zadávat.
+  # Ne → instrukce stisknout ALFA, pak pokračuj na certifikát
+  # ------------------------------------------
+  - id: hdt_alfa
+    type: boolean
+    question: "Svítí tlačítko ALFA?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT' && hdt_numbers == false"
+
+  # Instrukce: stiskněte ALFA (zobrazí se jen pokud tlačítko nesvítí)
+  - id: hdt_alfa_instruction
+    type: info
+    question: "Stiskněte tlačítko ALFA"
+    description: "Stiskněte tlačítko ALFA na klávesnici HDT a pokračujte."
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT' && hdt_numbers == false && hdt_alfa == false"
+
+  # ------------------------------------------
+  # Otázka 8: Po spuštění iTLS se spustí certifikát?
+  # Ano → přihlaste se znovu, incident lze uzavřít
+  # Ne → eskalace na VYROBNI KZ XX
+  # ------------------------------------------
+  - id: hdt_certificate
+    type: boolean
+    question: "Po spuštění iTLS se spustí certifikát?"
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT'"
+    on_false:
+      action: stop
+      incident_data:
+        actual_defect: "Nefunkční HDT"
+        resolver_group: "VYROBNI KZ XX Support SKODA"
+        impact: 4
+
+  # Instrukce: potvrďte certifikát a přihlaste se znovu (incident uzavřen)
+  - id: hdt_certificate_resolve
+    type: info
+    question: "Potvrďte ok a přihlaste se znovu"
+    description: "Po potvrzení certifikátu se znovu přihlaste do systému iTLS. Incident lze uzavřít."
+    render_if: "system == 'iTLS' && itls_symptom == 'Nefunkční HDT' && hdt_certificate == true"
+    action: stop

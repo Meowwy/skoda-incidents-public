@@ -1,0 +1,100 @@
+# Soubor: systems/itls/itls.yaml
+# Popis: Otázky pro diagnostiku systému iTLS
+
+steps:
+  # ------------------------------------------
+  # Otázka 1: K čemu se systém používá?
+  # ------------------------------------------
+  - id: itls_purpose
+    type: select
+    question: "K čemu se systém iTLS používá?"
+    options:
+      - "Ekonory (VZV)"
+      - "Tahače"
+      - "Evidence příjmu materiálu"
+      - "Mobilní light-LOGIS"
+      - "Kontaktujte Leitstanda" # slepá ulička, pokud uživatel neví
+    render_if: "system == 'iTLS'"
+
+  # Slepá ulička — uživatel zvolil "Kontaktujte Leitstanda"
+  - id: itls_purpose_dead_end
+    type: info
+    question: "Kontaktujte Leitstanda"
+    description: "Tento případ nelze řešit přes tento formulář. Obraťte se na Leitstanda."
+    render_if: "system == 'iTLS' && itls_purpose == 'Kontaktujte Leitstanda'"
+    action: stop
+
+  # ------------------------------------------
+  # Automatické přiřazení aplikace podle účelu
+  # (typ "hidden" s hodnotou "value" — uživatel nic nevybírá,
+  #  hodnota se uloží automaticky pokud podmínka platí)
+  # ------------------------------------------
+  - id: itls_app
+    type: hidden
+    value: "SLS"
+    render_if: "system == 'iTLS' && itls_purpose == 'Ekonory (VZV)'"
+
+  - id: itls_app
+    type: hidden
+    value: "ZLS"
+    render_if: "system == 'iTLS' && itls_purpose == 'Tahače'"
+
+  - id: itls_app
+    type: hidden
+    value: "ELS"
+    render_if: "system == 'iTLS' && itls_purpose == 'Evidence příjmu materiálu'"
+
+  - id: itls_app
+    type: hidden
+    value: "InLOG@WEB"
+    render_if: "system == 'iTLS' && itls_purpose == 'Mobilní light-LOGIS'"
+
+  # ------------------------------------------
+  # Otázka 2: Jaké zařízení?
+  # ------------------------------------------
+  - id: itls_device
+    type: select
+    question: "Jaké zařízení používáte?"
+    options:
+      - "HDT"
+      - "PC"
+    render_if: "system == 'iTLS' && itls_purpose != 'Kontaktujte Leitstanda'"
+
+  # ------------------------------------------
+  # Otázka 3: Co nefunguje?
+  # Položky pod "group" se zobrazí se záhlavím skupiny.
+  # ------------------------------------------
+  - id: itls_symptom
+    type: select
+    question: "Co přesně nefunguje?"
+    options:
+      - "Nefunkční HDT"
+      - "Nefunkční tisk"
+      - group: "Nefunkční iTLS"
+        options:
+          - "Nemožnost přihlášení"
+          - "Nelze zadat požadovanou hodnotu"
+          - "Nefunkční výstupy iTLS monitoru"
+          - "Nepřetékají data/zakázky"
+          - "Nestandardní chování"
+          - "Výpadek systému"
+          - "Zablokované pracoviště"
+          - "Chyba v rozhraní"
+    render_if: "system == 'iTLS' && itls_purpose != 'Kontaktujte Leitstanda'"
+
+  # ==========================================
+  # DIAGNOSTICKÉ VĚTVE (podle příznaku "Co nefunguje?")
+  # ==========================================
+
+  # Nefunkční HDT — diagnostický strom
+  - $include: "itls_hdt_diagnostic.yaml"
+
+  # Nefunkční výstupy iTLS monitoru — diagnostický strom
+  - $include: "itls_monitor_diagnostic.yaml"
+
+  # Nestandardní chování HDT — diagnostický strom
+  - $include: "itls_nestandardni_diagnostic.yaml"
+
+  # Další diagnostické větve přidat sem, např.:
+  # - $include: "itls_tisk_diagnostic.yaml"
+  # - $include: "itls_prihlaseni_diagnostic.yaml"
