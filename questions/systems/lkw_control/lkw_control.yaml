@@ -7,8 +7,8 @@ steps:
     type: select
     question: "K čemu se systém používá?"
     options:
-      - "Závodová ochrana (na bráně)"
-      - "Interní logistika (PLO)"
+      - "Závodová ochrana (kontrola na bráně / v závodě)"
+      - "Interní logistika (PLO) - Evidence LKW / Navádění k vykládce nebo nakládce"
       - "Něco jiného"
     render_if: "system == 'LKW Control x'"
 
@@ -42,6 +42,9 @@ steps:
       - "Výpadek systému"
       - "Chyba v rozhraní"
       - "Prázdný seznam jízd"
+      - "Chyba trasy v telematice"
+      - "Uživatel má jiné písmo v LKW Control X než jeho kolegové"
+      - "Nefunkčnost zadání požadavku na příjezd LKW"
     render_if: "system == 'LKW Control x' && lkw_purpose != 'Něco jiného'"
 
   # ==========================================
@@ -51,5 +54,4 @@ steps:
   # If they selected "Výpadek telematiky", load the SL3 flowchart
   - $include: "lkw_control_telematics_outage.yaml"
 
-  # To add logic for "Nemožnost přihlášení" later, you would create a new file:
-  # - $include: "../diagnostics/lkw_login_issue.yaml"
+  - $include: "lkw_control_unable_to_login.yaml"

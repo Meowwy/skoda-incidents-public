@@ -1,0 +1,80 @@
+# Soubor: systems/lkw_control/lkw_control_unable_to_login.yaml
+# Popis: Diagnostika výpadku telematiky v systému LKW Control
+
+steps:
+  - id: login_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nemožnost přihlášení"
+    render_if: "lkw_symptom == 'Nemožnost přihlášení'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Přihlášení po delší době"
+        description: "Přihlašuje se uživatel po delší době?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Zkontrolujte, zda má uživatel oprávnění. Je možné, že byl zablokován."
+        resolutions:
+          - actual_defect: "Chybějící oprávnění"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "Neobdržel přihlašovací údaje"
+        description: "Obdržel uživatel přihlašovací údaje?"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "Jelikož uživatel neobdržel přihlašovací údaje, nemá oprávnění. Alokujte řešení na řešitelskou skupinu."
+        resolutions:
+          - actual_defect: "Chybějící oprávnění"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "Po PKI odkaz na login?"
+        description: "Zobrazuje se po PKI odkaz na login?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: "Uživatel nemá oprávnění. Alokujte řešení na řešitelskou skupinu."
+        resolutions:
+          - actual_defect: "Chybějící oprávnění"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "FMA karta"
+        description: "Má uživatel FMA kartu s aktivním čipem a heslem do LKW Control?"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "Uživatel potřebuje tuto kartu."
+        resolutions:
+          - actual_defect: "Uživatel - nesprávný postup"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "Správná přidělená role"
+        description: "Má uživatel přidělenou roli KIRA a role v LKWc X?"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "Uživatel potřebuje tuto roli."
+        resolutions:
+          - actual_defect: "Uživatel - nesprávný postup"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA - skupina KIRA"
+            impact: 2
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "Vymazání cookies"
+        description: "Zkoušel vymazat cookies z prohlížeče, historii prohlížení a mezipaměť stránek?"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "Poraďte uživateli, aby vymazal cookies z prohlížeče."
+        resolutions:
+          - actual_defect: "Uživatel - nesprávný postup"
+            resolver_group: "Uživatel sám"
+            impact: 2
+            backup_strategy: "Není"
