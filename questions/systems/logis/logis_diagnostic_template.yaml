@@ -1,0 +1,43 @@
+# Soubor: systems/logis/logis_NAZEV_diagnostic.yaml
+# Popis: Diagnostika pro příznak "TODO" v systému LOGIS
+# Poznámka: Přejmenujte soubor podle příznaku a doplňte scénáře
+#
+# Struktura scénáře:
+#   title        — název záložky (co se děje)
+#   description  — otázka / co zkontrolovat (velký text v horní části panelu)
+#   ok_answer    — odpověď "v pořádku" (zobrazí se vlevo, zelená část)
+#   nok_answer   — odpověď "problém" (zobrazí se vpravo, červená část)
+#   action       — doporučená akce / workaround (zobrazí se v části incidentu)
+#   resolutions  — pole eskalací (prázdné [] = akce samotná problém vyřeší)
+
+steps:
+  - id: logis_todo_diagnostic
+    type: diagnostic
+    question: "Diagnostika: TODO název příznaku"
+    render_if: "system == 'LOGIS' && logis_symptom == 'TODO: Doplňte příznak 1'"
+    scenarios:
+      # -----------------------------------------
+      # Scénář 1
+      - title: "TODO: Název prvního kontrolního kroku"
+        description: "TODO: Co se má zkontrolovat? (toto se zobrazí jako hlavní otázka)"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "TODO: Co udělat pokud je odpověď NOK"
+        resolutions:
+          - actual_defect: "TODO: Zjištěná závada"
+            resolver_group: "TODO: Resolver skupina"
+            impact: 3
+            backup_strategy: "TODO: Záložní strategie"
+
+      # -----------------------------------------
+      # Scénář 2
+      - title: "TODO: Název druhého kontrolního kroku"
+        description: "TODO: Co se má zkontrolovat?"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "TODO: Co udělat pokud je odpověď NOK"
+        resolutions:
+          - actual_defect: "TODO: Zjištěná závada"
+            resolver_group: "TODO: Resolver skupina"
+            impact: 4
+            backup_strategy: "TODO: Záložní strategie"

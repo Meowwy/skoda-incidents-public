@@ -1,0 +1,57 @@
+# Soubor: systems/logis/logis.yaml
+# Popis: Otázky pro diagnostiku systému LOGIS
+# Poznámka: Toto je šablona — doplňte skutečné otázky a možnosti
+
+steps:
+  # ------------------------------------------
+  # Otázka 1: K čemu se systém používá?
+  # ------------------------------------------
+  - id: logis_purpose
+    type: select
+    question: "K čemu se systém LOGIS používá?"
+    options:
+      - "TODO: Doplňte účel 1"
+      - "TODO: Doplňte účel 2"
+      # - "Něco jiného"  # slepá ulička — odkomentujte pokud chcete
+    render_if: "system == 'LOGIS'"
+
+  # Slepá ulička (odkomentujte pokud máte volbu "Něco jiného")
+  # - id: logis_purpose_dead_end
+  #   type: info
+  #   question: "Mimo standardní proces"
+  #   description: "Kontaktujte svého nadřízeného."
+  #   render_if: "system == 'LOGIS' && logis_purpose == 'Něco jiného'"
+  #   action: stop
+
+  # ------------------------------------------
+  # Otázka 2: Jaké zařízení?
+  # ------------------------------------------
+  - id: logis_device
+    type: select
+    question: "Jaké zařízení používáte?"
+    options:
+      - "TODO: Doplňte zařízení 1"
+      - "TODO: Doplňte zařízení 2"
+    render_if: "system == 'LOGIS'"
+
+  # ------------------------------------------
+  # Otázka 3: Co přesně nefunguje?
+  # ------------------------------------------
+  - id: logis_symptom
+    type: select
+    question: "Co přesně nefunguje?"
+    options:
+      - "TODO: Doplňte příznak 1"
+      - "TODO: Doplňte příznak 2"
+      # Pokud potřebujete seskupit příznaky, použijte:
+      # - group: "Název skupiny"
+      #   options:
+      #     - "Příznak A"
+      #     - "Příznak B"
+    render_if: "system == 'LOGIS'"
+
+  # ==========================================
+  # DIAGNOSTICKÉ VĚTVE
+  # ==========================================
+  # Pro každý příznak vytvořte diagnostický soubor a vložte ho sem:
+  # - $include: "logis_NAZEV_diagnostic.yaml"

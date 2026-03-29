@@ -1,9 +1,6 @@
-# Warehouses (sklady) grouped by location (lokalita).
-# Each location lists its available warehouse codes.
+# Sklady seskupeny podle lokality
 #
-# To add a new location:  add a new entry with a name and warehouses list.
-# To add a warehouse:     append the code to the location's warehouses list.
-# After any change run:   npm run build-schema
+# Po zmenach spustit: npm run build-schema
 
 locations:
   - name: MB hl. závod

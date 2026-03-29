@@ -1,0 +1,57 @@
+# Soubor: systems/ineas_ma/ineas_ma.yaml
+# Popis: Otázky pro diagnostiku systému INEAS-MA
+# Poznámka: Toto je šablona — doplňte skutečné otázky a možnosti
+
+steps:
+  # ------------------------------------------
+  # Otázka 1: K čemu se systém používá?
+  # ------------------------------------------
+  - id: ineas_ma_purpose
+    type: select
+    question: "K čemu se systém INEAS-MA používá?"
+    options:
+      - "TODO: Doplňte účel 1"
+      - "TODO: Doplňte účel 2"
+      # - "Něco jiného"  # slepá ulička — odkomentujte pokud chcete
+    render_if: "system == 'INEAS-MA'"
+
+  # Slepá ulička (odkomentujte pokud máte volbu "Něco jiného")
+  # - id: ineas_ma_purpose_dead_end
+  #   type: info
+  #   question: "Mimo standardní proces"
+  #   description: "Kontaktujte svého nadřízeného."
+  #   render_if: "system == 'INEAS-MA' && ineas_ma_purpose == 'Něco jiného'"
+  #   action: stop
+
+  # ------------------------------------------
+  # Otázka 2: Jaké zařízení?
+  # ------------------------------------------
+  - id: ineas_ma_device
+    type: select
+    question: "Jaké zařízení používáte?"
+    options:
+      - "TODO: Doplňte zařízení 1"
+      - "TODO: Doplňte zařízení 2"
+    render_if: "system == 'INEAS-MA'"
+
+  # ------------------------------------------
+  # Otázka 3: Co přesně nefunguje?
+  # ------------------------------------------
+  - id: ineas_ma_symptom
+    type: select
+    question: "Co přesně nefunguje?"
+    options:
+      - "TODO: Doplňte příznak 1"
+      - "TODO: Doplňte příznak 2"
+      # Pokud potřebujete seskupit příznaky, použijte:
+      # - group: "Název skupiny"
+      #   options:
+      #     - "Příznak A"
+      #     - "Příznak B"
+    render_if: "system == 'INEAS-MA'"
+
+  # ==========================================
+  # DIAGNOSTICKÉ VĚTVE
+  # ==========================================
+  # Pro každý příznak vytvořte diagnostický soubor a vložte ho sem:
+  # - $include: "ineas_ma_NAZEV_diagnostic.yaml"

@@ -37,5 +37,14 @@ steps:
   # iTLS branch
   - $include: "./systems/itls/itls.yaml"
 
-  # HOD branch (mock)
+  # HOD branch
   - $include: "./systems/hod/hod.yaml"
+
+  # ANDON branch
+  - $include: "./systems/andon/andon.yaml"
+
+  # LOGIS branch
+  - $include: "./systems/logis/logis.yaml"
+
+  # INEAS-MA branch
+  - $include: "./systems/ineas_ma/ineas_ma.yaml"

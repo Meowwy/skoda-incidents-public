@@ -592,6 +592,96 @@
           "backup_strategy": "Provést manuální synchronizaci"
         }
       }
+    },
+    {
+      "id": "andon_purpose",
+      "type": "select",
+      "question": "K čemu se systém ANDON používá?",
+      "options": [
+        "TODO: Doplňte účel 1",
+        "TODO: Doplňte účel 2"
+      ],
+      "render_if": "system == 'ANDON'"
+    },
+    {
+      "id": "andon_device",
+      "type": "select",
+      "question": "Jaké zařízení používáte?",
+      "options": [
+        "TODO: Doplňte zařízení 1",
+        "TODO: Doplňte zařízení 2"
+      ],
+      "render_if": "system == 'ANDON'"
+    },
+    {
+      "id": "andon_symptom",
+      "type": "select",
+      "question": "Co přesně nefunguje?",
+      "options": [
+        "TODO: Doplňte příznak 1",
+        "TODO: Doplňte příznak 2"
+      ],
+      "render_if": "system == 'ANDON'"
+    },
+    {
+      "id": "logis_purpose",
+      "type": "select",
+      "question": "K čemu se systém LOGIS používá?",
+      "options": [
+        "TODO: Doplňte účel 1",
+        "TODO: Doplňte účel 2"
+      ],
+      "render_if": "system == 'LOGIS'"
+    },
+    {
+      "id": "logis_device",
+      "type": "select",
+      "question": "Jaké zařízení používáte?",
+      "options": [
+        "TODO: Doplňte zařízení 1",
+        "TODO: Doplňte zařízení 2"
+      ],
+      "render_if": "system == 'LOGIS'"
+    },
+    {
+      "id": "logis_symptom",
+      "type": "select",
+      "question": "Co přesně nefunguje?",
+      "options": [
+        "TODO: Doplňte příznak 1",
+        "TODO: Doplňte příznak 2"
+      ],
+      "render_if": "system == 'LOGIS'"
+    },
+    {
+      "id": "ineas_ma_purpose",
+      "type": "select",
+      "question": "K čemu se systém INEAS-MA používá?",
+      "options": [
+        "TODO: Doplňte účel 1",
+        "TODO: Doplňte účel 2"
+      ],
+      "render_if": "system == 'INEAS-MA'"
+    },
+    {
+      "id": "ineas_ma_device",
+      "type": "select",
+      "question": "Jaké zařízení používáte?",
+      "options": [
+        "TODO: Doplňte zařízení 1",
+        "TODO: Doplňte zařízení 2"
+      ],
+      "render_if": "system == 'INEAS-MA'"
+    },
+    {
+      "id": "ineas_ma_symptom",
+      "type": "select",
+      "question": "Co přesně nefunguje?",
+      "options": [
+        "TODO: Doplňte příznak 1",
+        "TODO: Doplňte příznak 2"
+      ],
+      "render_if": "system == 'INEAS-MA'"
     }
   ]
 }
