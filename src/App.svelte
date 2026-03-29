@@ -447,7 +447,7 @@
           </div>
 
           <div class="question-nav">
-            <button class="btn-nav btn-back" onclick={goBack}>Zpět</button>
+            <button class="btn-nav btn-back" onclick={goBack}>Krok zpět</button>
           </div>
         </div>
 
@@ -473,11 +473,6 @@
             {#if currentStep.scenarios[selectedScenarioIndex]}
               {@const scenario = currentStep.scenarios[selectedScenarioIndex]}
               <div class="scenario-detail">
-                <h3 class="scenario-title">
-                  <span class="scenario-title-number">{selectedScenarioIndex + 1}.</span>
-                  {scenario.title}
-                </h3>
-
                 <!-- UPPER: Diagnostic question -->
                 <div class="scenario-question-box">
                   <p class="scenario-description">{scenario.description}</p>
@@ -559,7 +554,7 @@
           </div>
 
           <div class="question-nav">
-            <button class="btn-nav btn-back" onclick={goBack}>Zpět</button>
+            <button class="btn-nav btn-back" onclick={goBack}>Krok zpět</button>
           </div>
         </div>
 

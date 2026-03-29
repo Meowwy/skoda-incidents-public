@@ -692,23 +692,21 @@ button {
 }
 
 .answer-ok {
-  width: 30%;
-  min-width: 140px;
   background: linear-gradient(135deg, #f0faf0 0%, #e6f5e6 100%);
-  padding: 24px 20px;
+  padding: 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 12px;
   border-right: 1px solid #e2e8f0;
+  flex-shrink: 0;
 }
 
 .answer-label-ok {
-  font-size: 1.8rem;
+  font-size: 1.4rem;
   font-weight: 800;
   color: #4ba82e;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.3px;
 }
 
 .answer-hint-ok {
