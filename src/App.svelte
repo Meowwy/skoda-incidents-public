@@ -37,6 +37,7 @@
   let availableWarehouses = $derived(selectedLocation ? (warehouseMap[selectedLocation] || []) : []);
   let currentStep = $derived(currentStepIndex >= 0 && currentStepIndex < schema.steps.length ? schema.steps[currentStepIndex] : null);
   let canProceedLocation = $derived(selectedWarehouse !== null);
+  let systemPanelCollapsed = $derived(phase === 'system' && selectedSystem !== null && currentStepIndex >= 0);
 
   // Reset scenario selection when navigating to a new diagnostic step
   $effect(() => {
@@ -59,12 +60,18 @@
 
   let breadcrumb = $derived.by(() => {
     const parts = [];
-    if (selectedArea) parts.push(selectedArea);
-    if (selectedSubarea) parts.push(selectedSubarea);
-    if (selectedLocation) parts.push(selectedLocation);
-    if (selectedWarehouse) parts.push(selectedWarehouse);
-    if (selectedSystem) parts.push(selectedSystem);
-    if (currentStep) parts.push(currentStep.question.substring(0, 30) + (currentStep.question.length > 30 ? '...' : ''));
+    if (selectedArea) parts.push({ label: selectedArea, type: 'fixed' });
+    if (selectedSubarea) parts.push({ label: selectedSubarea, type: 'fixed' });
+    if (selectedLocation) parts.push({ label: selectedLocation, type: 'fixed' });
+    if (selectedWarehouse) parts.push({ label: selectedWarehouse, type: 'fixed' });
+    if (selectedSystem) parts.push({ label: selectedSystem, type: 'system' });
+    for (const item of selectTrail) {
+      parts.push({ label: item.answer, type: 'trail' });
+    }
+    if (currentStep && currentStep.type !== 'select') {
+      const q = currentStep.question;
+      parts.push({ label: q.length > 40 ? q.substring(0, 40) + '...' : q, type: 'step' });
+    }
     return parts;
   });
 
@@ -206,6 +213,14 @@
     }
   }
 
+  function goBackToSystemSelection() {
+    currentStepIndex = -1;
+    selectedSystem = null;
+    history = [];
+    const preserved = { area: answers.area, subarea: answers.subarea, location: answers.location, warehouse: answers.warehouse, additional_info: answers.additional_info };
+    answers = preserved;
+  }
+
   function goBackToLocation() {
     phase = 'location';
     selectedSystem = null;
@@ -237,6 +252,20 @@
 </header>
 
 <main class="app-main">
+
+  <!-- UNIVERSAL BREADCRUMB -->
+  {#if breadcrumb.length > 0}
+    <div class="breadcrumb">
+      {#each breadcrumb as part, i (i)}
+        {#if i > 0}<span class="breadcrumb-sep">&rsaquo;</span>{/if}
+        <span class="breadcrumb-item"
+              class:breadcrumb-trail={part.type === 'trail'}
+              class:breadcrumb-system={part.type === 'system'}>
+          {part.label}
+        </span>
+      {/each}
+    </div>
+  {/if}
 
   <!-- ============================== -->
   <!-- PHASE 1: LOCATION SELECTION    -->
@@ -341,35 +370,36 @@
   <!-- PHASE 2: SYSTEM & QUESTIONS    -->
   <!-- ============================== -->
   {:else if phase === 'system'}
-    <!-- Breadcrumb -->
-    <div class="breadcrumb">
-      {#each breadcrumb as part, i (i)}
-        {#if i > 0}<span class="breadcrumb-sep">&rsaquo;</span>{/if}
-        <span class="breadcrumb-item">{part}</span>
-      {/each}
-    </div>
-
     <div class="system-layout">
-      <!-- LEFT: System Selection -->
-      <div class="system-panel">
-        <h2 class="panel-heading">Jaký systém má výpadek?</h2>
-        <div class="system-grid">
-          {#each systemOptions as sys (sys)}
-            <button
-              class="system-card {selectedSystem === sys ? 'selected' : ''}"
-              onclick={() => selectSystem(sys)}
-            >
-              <div class="system-logo">
-                <img src={getLogoPath(sys)} alt="{sys} logo" />
-              </div>
-              <span class="system-name">{sys}</span>
-            </button>
-          {/each}
-        </div>
+      <!-- LEFT: System Selection (collapsible) -->
+      <div class="system-panel" class:collapsed={systemPanelCollapsed}>
+        {#if systemPanelCollapsed}
+          <button class="btn-back-collapsed" onclick={goBackToSystemSelection} title="Zpět na výběr systému">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M13 4L7 10L13 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <span class="collapsed-system-name">{selectedSystem}</span>
+        {:else}
+          <h2 class="panel-heading">Jaký systém má výpadek?</h2>
+          <div class="system-grid">
+            {#each systemOptions as sys (sys)}
+              <button
+                class="system-card {selectedSystem === sys ? 'selected' : ''}"
+                onclick={() => selectSystem(sys)}
+              >
+                <div class="system-logo">
+                  <img src={getLogoPath(sys)} alt="{sys} logo" />
+                </div>
+                <span class="system-name">{sys}</span>
+              </button>
+            {/each}
+          </div>
 
-        <button class="btn-back-location" onclick={goBackToLocation}>
-          Zpět na výběr lokality
-        </button>
+          <button class="btn-back-location" onclick={goBackToLocation}>
+            Zpět na výběr lokality
+          </button>
+        {/if}
       </div>
 
       <!-- RIGHT: Diagram or Questions -->
@@ -424,15 +454,6 @@
       {:else if currentStep && currentStep.type === 'diagnostic'}
         <!-- DIAGNOSTIC MODE: numbered vertical tabs + two-part detail panel -->
         <div class="diagnostic-panel">
-          {#if selectTrail.length > 0}
-            <div class="trail-summary">
-              {#each selectTrail as item, i (item.step.id)}
-                {#if i > 0}<span class="trail-sep">&rsaquo;</span>{/if}
-                <span class="trail-chip">{item.answer}</span>
-              {/each}
-            </div>
-          {/if}
-
           <h2 class="diagnostic-heading">{currentStep.question}</h2>
 
           <div class="diagnostic-layout">
@@ -545,15 +566,6 @@
       {:else if currentStep}
         <!-- FALLBACK: normal panel for boolean/info steps -->
         <div class="questions-panel">
-          {#if selectTrail.length > 0}
-            <div class="trail-summary">
-              {#each selectTrail as item, i (item.step.id)}
-                {#if i > 0}<span class="trail-sep">&rsaquo;</span>{/if}
-                <span class="trail-chip">{item.answer}</span>
-              {/each}
-            </div>
-          {/if}
-
           <h2 class="question-text">{currentStep.question}</h2>
 
           {#if currentStep.description}
