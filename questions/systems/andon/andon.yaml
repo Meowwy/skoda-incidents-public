@@ -12,16 +12,16 @@ steps:
     options:
       - "TODO: Doplňte účel 1"
       - "TODO: Doplňte účel 2"
-      # - "Něco jiného"  # slepá ulička — odkomentujte pokud chcete
+      - "Něco jiného / Nevím"
     render_if: "system == 'ANDON'"
 
-  # Slepá ulička (odkomentujte pokud máte volbu "Něco jiného")
-  # - id: andon_purpose_dead_end
-  #   type: info
-  #   question: "Mimo standardní proces"
-  #   description: "Kontaktujte svého nadřízeného."
-  #   render_if: "system == 'ANDON' && andon_purpose == 'Něco jiného'"
-  #   action: stop
+  # úniková možnost
+  - id: andon_purpose_dead_end
+    type: info
+    question: "Mimo standardní proces"
+    description: "Kontaktujte svého nadřízeného."
+    render_if: "system == 'ANDON' && andon_purpose == 'Něco jiného / Nevím'"
+    action: stop
 
   # ------------------------------------------
   # Otázka 2: Jaké zařízení?

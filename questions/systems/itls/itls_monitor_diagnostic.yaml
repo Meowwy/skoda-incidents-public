@@ -11,9 +11,7 @@ steps:
     scenarios:
       # -----------------------------------------
       - title: "Funguje na jiném PC — vada monitoru"
-        description: "Funguje zobrazení dat z iTLS na jiném PC nebo monitoru?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Zobrazení dat z iTLS funguje na jiném PC — jedná se o vadu monitoru."
         action: "Monitor je vadný. Zajistěte zvýšený monitoring ze strany leitstandu do výměny monitoru."
         resolutions:
           - actual_defect: "Vada monitoru"
@@ -23,9 +21,7 @@ steps:
 
       # -----------------------------------------
       - title: "Nefunguje ani na jiném PC — chyba nastavení"
-        description: "Nefunguje zobrazení dat z iTLS na žádném PC ani monitoru?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Zobrazení dat z iTLS nefunguje na žádném PC ani monitoru — jedná se o chybu nastavení."
         action: "Jedná se o chybu nastavení monitorů. Zajistěte zvýšený monitoring ze strany leitstandu."
         resolutions:
           - actual_defect: "Chyba nastavení monitorů"

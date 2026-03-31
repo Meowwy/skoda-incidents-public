@@ -473,82 +473,59 @@
             {#if currentStep.scenarios[selectedScenarioIndex]}
               {@const scenario = currentStep.scenarios[selectedScenarioIndex]}
               <div class="scenario-detail">
-                <!-- UPPER: Diagnostic question -->
                 <div class="scenario-question-box">
                   <p class="scenario-description">{scenario.description}</p>
                 </div>
 
-                <!-- LOWER: Two-column answer layout -->
-                <div class="answer-columns">
-                  <!-- OK side (all clear) -->
-                  <div class="answer-ok">
-                    <span class="answer-label-ok">{scenario.ok_answer}</span>
-                    <span class="answer-hint-ok">Pokračujte na další kontrolu</span>
+                {#if scenario.action}
+                  <div class="nok-action">
+                    <span class="nok-action-label">Doporučená akce</span>
+                    {scenario.action}
                   </div>
+                {/if}
 
-                  <!-- Separator -->
-                  <div class="answer-separator">
-                    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                      <line x1="6" y1="6" x2="22" y2="22" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"/>
-                      <line x1="22" y1="6" x2="6" y2="22" stroke="#cbd5e0" stroke-width="2.5" stroke-linecap="round"/>
-                    </svg>
-                  </div>
-
-                  <!-- NOK side (incident) -->
-                  <div class="answer-nok">
-                    <span class="answer-label-nok">{scenario.nok_answer}</span>
-
-                    {#if scenario.action}
-                      <div class="nok-action">
-                        <span class="nok-action-label">Doporučená akce</span>
-                        {scenario.action}
-                      </div>
-                    {/if}
-
-                    {#if scenario.resolutions && scenario.resolutions.length > 0}
-                      {#each scenario.resolutions as resolution, ri (ri)}
-                        <div class="resolution-card">
-                          <div class="resolution-details">
-                            {#if resolution.actual_defect}
-                              <div class="resolution-row">
-                                <span class="resolution-label">Zjištěná závada:</span>
-                                <span class="resolution-value">{resolution.actual_defect}</span>
-                              </div>
-                            {/if}
-                            {#if resolution.resolver_group}
-                              <div class="resolution-row">
-                                <span class="resolution-label">Resolver skupina:</span>
-                                <span class="resolution-value">{resolution.resolver_group}</span>
-                              </div>
-                            {/if}
-                            {#if resolution.impact}
-                              <div class="resolution-row">
-                                <span class="resolution-label">Impact:</span>
-                                <span class="resolution-value">{resolution.impact}</span>
-                              </div>
-                            {/if}
-                            {#if resolution.backup_strategy}
-                              <div class="resolution-backup">
-                                <strong>Záložní strategie:</strong> {resolution.backup_strategy}
-                              </div>
-                            {/if}
+                {#if scenario.resolutions && scenario.resolutions.length > 0}
+                  {#each scenario.resolutions as resolution, ri (ri)}
+                    <div class="resolution-card">
+                      <div class="resolution-details">
+                        {#if resolution.actual_defect}
+                          <div class="resolution-row">
+                            <span class="resolution-label">Zjištěná závada:</span>
+                            <span class="resolution-value">{resolution.actual_defect}</span>
                           </div>
-                        </div>
-                      {/each}
+                        {/if}
+                        {#if resolution.resolver_group}
+                          <div class="resolution-row">
+                            <span class="resolution-label">Resolver skupina:</span>
+                            <span class="resolution-value">{resolution.resolver_group}</span>
+                          </div>
+                        {/if}
+                        {#if resolution.impact}
+                          <div class="resolution-row">
+                            <span class="resolution-label">Impact:</span>
+                            <span class="resolution-value">{resolution.impact}</span>
+                          </div>
+                        {/if}
+                        {#if resolution.backup_strategy}
+                          <div class="resolution-backup">
+                            <strong>Záložní strategie:</strong> {resolution.backup_strategy}
+                          </div>
+                        {/if}
+                      </div>
+                    </div>
+                  {/each}
 
-                      <div class="scenario-actions">
-                        <button class="btn-submit" disabled title="Připravujeme">
-                          Odeslat incident
-                          <span class="btn-badge">Připravujeme</span>
-                        </button>
-                      </div>
-                    {:else}
-                      <div class="resolution-selfclose">
-                        Eskalace není potřeba — incident lze uzavřít po provedení akce.
-                      </div>
-                    {/if}
+                  <div class="scenario-actions">
+                    <button class="btn-submit" disabled title="Připravujeme">
+                      Odeslat incident
+                      <span class="btn-badge">Připravujeme</span>
+                    </button>
                   </div>
-                </div>
+                {:else}
+                  <div class="resolution-selfclose">
+                    Eskalace není potřeba — incident lze uzavřít po provedení akce.
+                  </div>
+                {/if}
               </div>
             {/if}
           </div>

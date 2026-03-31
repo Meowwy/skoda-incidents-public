@@ -32,7 +32,7 @@
       "options": [
         "Závodová ochrana (kontrola na bráně / v závodě)",
         "Interní logistika (PLO) - Evidence LKW / Navádění k vykládce nebo nakládce",
-        "Něco jiného"
+        "Něco jiného / Nevím"
       ],
       "render_if": "system == 'LKW Control x'"
     },
@@ -41,7 +41,7 @@
       "type": "info",
       "question": "Mimo standardní proces",
       "description": "Kontaktujte svého nadřízeného.",
-      "render_if": "system == 'LKW Control x' && lkw_purpose == 'Něco jiného'",
+      "render_if": "system == 'LKW Control x' && lkw_purpose == 'Něco jiného / Nevím'",
       "action": "stop"
     },
     {
@@ -64,8 +64,7 @@
       "options": [
         "Výpadek telematiky",
         "Nemožnost přihlášení",
-        "Výpadek systému",
-        "Chyba v rozhraní",
+        "Výpadek systému a chyba v rozhraní",
         "Prázdný seznam jízd",
         "Chyba trasy v telematice",
         "Uživatel má jiné písmo v LKW Control X než jeho kolegové",
@@ -81,9 +80,7 @@
       "scenarios": [
         {
           "title": "Výpadek u operátora",
-          "description": "Je u mobilního operátora hlášený nebo registrovaný výpadek sítě?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "U mobilního operátora je hlášený nebo registrovaný výpadek sítě.",
           "action": "Informujte uživatele, že se jedná o výpadek na straně operátora. Čekejte na obnovení.",
           "resolutions": [
             {
@@ -96,9 +93,7 @@
         },
         {
           "title": "Neaktivní mobilní data",
-          "description": "Jsou na telematice aktivní mobilní data?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
+          "description": "Na telematice nejsou aktivní mobilní data.",
           "action": "Kontaktujte help desk pro správné nastavení mobilních dat na zařízení.",
           "resolutions": [
             {
@@ -111,9 +106,7 @@
         },
         {
           "title": "Zapnutý režim letadlo",
-          "description": "Je na telematice zapnutý režim letadlo?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Na telematice je zapnutý režim letadlo.",
           "action": "Řekněte uživateli, aby vypnul režim letadlo v nastavení zařízení.",
           "resolutions": [
             {
@@ -126,9 +119,7 @@
         },
         {
           "title": "Výpadek jedné telematiky",
-          "description": "Fungují ostatní telematiky správně?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Ostatní telematiky fungují správně — výpadek se týká jednoho zařízení.",
           "action": "Jedná se o závadu jednoho zařízení. Požádejte uživatele, aby použil jiné zařízení.",
           "resolutions": [
             {
@@ -141,9 +132,7 @@
         },
         {
           "title": "Výpadek více telematik",
-          "description": "Vykazují stejnou závadu i další telematiky?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Stejnou závadu vykazují i další telematiky — rozsáhlý výpadek.",
           "action": "Jedná se o rozsáhlý výpadek. Zajistěte krizový režim dle pokynů.",
           "resolutions": [
             {
@@ -165,8 +154,6 @@
         {
           "title": "Přihlášení po delší době",
           "description": "Přihlašuje se uživatel po delší době?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
           "action": "Zkontrolujte, zda má uživatel oprávnění. Je možné, že byl zablokován.",
           "resolutions": [
             {
@@ -180,8 +167,6 @@
         {
           "title": "Neobdržel přihlašovací údaje",
           "description": "Obdržel uživatel přihlašovací údaje?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
           "action": "Jelikož uživatel neobdržel přihlašovací údaje, nemá oprávnění. Alokujte řešení na řešitelskou skupinu.",
           "resolutions": [
             {
@@ -195,8 +180,6 @@
         {
           "title": "Po PKI odkaz na login?",
           "description": "Zobrazuje se po PKI odkaz na login?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
           "action": "Uživatel nemá oprávnění. Alokujte řešení na řešitelskou skupinu.",
           "resolutions": [
             {
@@ -210,8 +193,6 @@
         {
           "title": "FMA karta",
           "description": "Má uživatel FMA kartu s aktivním čipem a heslem do LKW Control?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
           "action": "Uživatel potřebuje tuto kartu.",
           "resolutions": [
             {
@@ -225,8 +206,6 @@
         {
           "title": "Správná přidělená role",
           "description": "Má uživatel přidělenou roli KIRA a role v LKWc X?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
           "action": "Uživatel potřebuje tuto roli.",
           "resolutions": [
             {
@@ -240,13 +219,92 @@
         {
           "title": "Vymazání cookies",
           "description": "Zkoušel vymazat cookies z prohlížeče, historii prohlížení a mezipaměť stránek?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
           "action": "Poraďte uživateli, aby vymazal cookies z prohlížeče.",
           "resolutions": [
             {
               "actual_defect": "Uživatel - nesprávný postup",
               "resolver_group": "Uživatel sám",
+              "impact": 2,
+              "backup_strategy": "Není"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "outage_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Výpadek systému a chyba v rozhraní",
+      "render_if": "lkw_symptom == 'Výpadek systému a chyba v rozhraní'",
+      "scenarios": [
+        {
+          "title": "Přihlašovací formulář",
+          "description": "Přihlašovací formulář pro vyplnění UserID se nezobrazuje.",
+          "action": "Zkontrolujte, zda je výpadek ecidován i v jiných závodech. Pokud ne, zadejte požadavek na řešitelskou skupinu viz níže.",
+          "resolutions": [
+            {
+              "actual_defect": "Chybné nastavení",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Data v LKW Control",
+          "description": "Do LKW Control nepřitékají data.",
+          "action": "",
+          "resolutions": [
+            {
+              "actual_defect": "Chyba v rozhraní",
+              "resolver_group": "nedefinováno",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "trip_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Prázdný seznam jízd",
+      "render_if": "lkw_symptom == 'Prázdný seznam jízd'",
+      "scenarios": [
+        {
+          "title": "Vymazání cookies",
+          "description": "Zkoušel vymazat cookies z prohlížeče, historii prohlížení a mezipaměť stránek?",
+          "action": "Poraďte uživateli, aby vymazal cookies z prohlížeče.",
+          "resolutions": [
+            {
+              "actual_defect": "Chybné nastavení",
+              "resolver_group": "Uživatel sám",
+              "impact": 2,
+              "backup_strategy": "Zaškrtnout Vymazat cookies a data stránek při zavření Firefoxu"
+            }
+          ]
+        },
+        {
+          "title": "Filtr pozic",
+          "description": "Má uživatel zepnutý filtr pozic?",
+          "action": "Uživatel by měl vyplnout filtr na pozice.",
+          "resolutions": [
+            {
+              "actual_defect": "Uživatel sám",
+              "resolver_group": "",
+              "impact": 2,
+              "backup_strategy": "Kontrola filtru: Řídící stanoviště – Náhled parkovacích míst … - Filtr (vpravo nahoře) položky za Fitr musí být podbarvené modře."
+            }
+          ]
+        },
+        {
+          "title": "Oprávnění uživatele",
+          "description": "Má uživatel oprávnění?",
+          "action": "Uživatel potřebuje oprávnění.",
+          "resolutions": [
+            {
+              "actual_defect": "Chyné nastavení",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
               "impact": 2,
               "backup_strategy": "Není"
             }
@@ -263,7 +321,7 @@
         "Tahače - ZLS",
         "Evidence příjmu materiálu - ELS",
         "Mobilní light-LOGIS - InLOG@WEB",
-        "Kontaktujte Leitstanda"
+        "Něco jiného / Nevím"
       ],
       "render_if": "system == 'iTLS'"
     },
@@ -272,7 +330,7 @@
       "type": "info",
       "question": "Kontaktujte Leitstanda",
       "description": "Tento případ nelze řešit přes tento formulář. Obraťte se na Leitstanda.",
-      "render_if": "system == 'iTLS' && itls_purpose == 'Kontaktujte Leitstanda'",
+      "render_if": "system == 'iTLS' && itls_purpose == 'Něco jiného / Nevím'",
       "action": "stop"
     },
     {
@@ -316,9 +374,7 @@
       "scenarios": [
         {
           "title": "Nefunguje na žádném zařízení",
-          "description": "Funguje iTLS na jiném zařízení ve skladu?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
+          "description": "iTLS nefunguje na žádném zařízení ve skladu.",
           "action": "Informujte uživatele o globálním výpadku. Přepněte na záložní závěsky (B závěsky).",
           "resolutions": [
             {
@@ -331,9 +387,7 @@
         },
         {
           "title": "Nesvítí ikona WIFI",
-          "description": "Svítí vlevo nahoře na displeji HDT ikona WIFI?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
+          "description": "Na displeji HDT nesvítí vlevo nahoře ikona WIFI.",
           "action": "Zařízení nemá síťové připojení. Přepněte na záložní závěsky (B závěsky).",
           "resolutions": [
             {
@@ -346,22 +400,13 @@
         },
         {
           "title": "Nesvítí ikona baterie",
-          "description": "Svítí vpravo nahoře na displeji HDT ikona stavu baterie?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
-          "action": "Řekněte uživateli, aby vyměnil baterii v HDT. Pokud problém přetrvává, vyměňte celé HDT.",
-          "resolutions": [
-            {
-              "actual_defect": "Vybita baterie",
-              "backup_strategy": "Výměna baterie nebo výměna HDT"
-            }
-          ]
+          "description": "Na displeji HDT nesvítí vpravo nahoře ikona stavu baterie.",
+          "action": "Řekněte uživateli, aby vyměnil baterii v HDT.",
+          "resolutions": []
         },
         {
           "title": "HDT nejde zapnout",
-          "description": "Jde zařízení zapnout?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
+          "description": "Zařízení HDT nejde zapnout.",
           "action": "Řekněte uživateli, aby zkusil restartovat zařízení podržením tlačítka napájení.",
           "resolutions": [
             {
@@ -374,9 +419,7 @@
         },
         {
           "title": "HDT nefunguje standardně",
-          "description": "Funguje zařízení standardně po zapnutí?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
+          "description": "Zařízení po zapnutí nefunguje standardně.",
           "action": "Řekněte uživateli, aby podržel červené tlačítko v pravém horním rohu klávesnice pro restart aplikace.",
           "resolutions": [
             {
@@ -389,17 +432,13 @@
         },
         {
           "title": "Nejdou zadávat číslice",
-          "description": "Svítí na klávesnici HDT tlačítko ALFA?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
+          "description": "Na klávesnici HDT svítí tlačítko ALFA — nelze zadávat číslice.",
           "action": "Stiskněte tlačítko ALFA — přepne klávesnici zpět do numerického režimu.",
           "resolutions": []
         },
         {
           "title": "Certifikát se nespustí",
-          "description": "Spustí se po zapnutí iTLS certifikát?",
-          "ok_answer": "Ano",
-          "nok_answer": "Ne",
+          "description": "Po zapnutí iTLS se nespustí certifikát.",
           "action": "Zkuste restartovat HDT a spustit iTLS znovu. Pokud certifikát stále nejde, eskalujte.",
           "resolutions": [
             {
@@ -411,9 +450,7 @@
         },
         {
           "title": "Certifikát proběhl, stále nefunguje",
-          "description": "Spustil se certifikát správně?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Certifikát proběhl správně, ale systém stále nefunguje.",
           "action": "Potvrďte certifikát tlačítkem OK a znovu se přihlaste do systému iTLS. Incident lze uzavřít.",
           "resolutions": []
         }
@@ -427,9 +464,7 @@
       "scenarios": [
         {
           "title": "Funguje na jiném PC — vada monitoru",
-          "description": "Funguje zobrazení dat z iTLS na jiném PC nebo monitoru?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Zobrazení dat z iTLS funguje na jiném PC — jedná se o vadu monitoru.",
           "action": "Monitor je vadný. Zajistěte zvýšený monitoring ze strany leitstandu do výměny monitoru.",
           "resolutions": [
             {
@@ -442,9 +477,7 @@
         },
         {
           "title": "Nefunguje ani na jiném PC — chyba nastavení",
-          "description": "Nefunguje zobrazení dat z iTLS na žádném PC ani monitoru?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Zobrazení dat z iTLS nefunguje na žádném PC ani monitoru — jedná se o chybu nastavení.",
           "action": "Jedná se o chybu nastavení monitorů. Zajistěte zvýšený monitoring ze strany leitstandu.",
           "resolutions": [
             {
@@ -465,9 +498,7 @@
       "scenarios": [
         {
           "title": "Opětovné odhlašování",
-          "description": "Dochází k opakovanému odhlašování uživatele ze systému?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Dochází k opakovanému odhlašování uživatele ze systému.",
           "action": "Zkontrolujte nastavení relace uživatele. Ověřte, zda je správně přiřazený profil.",
           "resolutions": [
             {
@@ -479,9 +510,7 @@
         },
         {
           "title": "Odhlašování po novém releasu",
-          "description": "Došlo v poslední době k aktualizaci / novému releasu iTLS?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "K odhlašování dochází po nedávné aktualizaci / novém releasu iTLS.",
           "action": "Ověřte, zda se problém týká více uživatelů. Pokud ano, jedná se pravděpodobně o chybu v nové verzi.",
           "resolutions": [
             {
@@ -493,9 +522,7 @@
         },
         {
           "title": "Nestandardní operace na displeji",
-          "description": "Zobrazují se na HDT neočekávané operace nebo nesprávná data?",
-          "ok_answer": "Ne",
-          "nok_answer": "Ano",
+          "description": "Na HDT se zobrazují neočekávané operace nebo nesprávná data.",
           "action": "Řekněte uživateli, aby kontaktoval svého Key usera pro kontrolu a opravu nastavení.",
           "resolutions": [
             {
@@ -515,7 +542,7 @@
         "Příjem zboží",
         "Vyskladnění",
         "Inventura",
-        "Něco jiného"
+        "Něco jiného / Nevím"
       ],
       "render_if": "system == 'HOD'"
     },
@@ -524,7 +551,7 @@
       "type": "info",
       "question": "Mimo standardní proces",
       "description": "Kontaktujte svého nadřízeného.",
-      "render_if": "system == 'HOD' && hod_purpose == 'Něco jiného'",
+      "render_if": "system == 'HOD' && hod_purpose == 'Něco jiného / Nevím'",
       "action": "stop"
     },
     {
@@ -551,124 +578,153 @@
       "render_if": "system == 'HOD' && hod_purpose != 'Něco jiného'"
     },
     {
-      "id": "diag_hod_wifi",
-      "type": "boolean",
-      "question": "Je zařízení připojeno k Wi-Fi?",
-      "render_if": "hod_symptom == 'Ztráta připojení'",
-      "on_false": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Výpadek Wi-Fi připojení",
-          "resolver_group": "NETWORK Support SKODA",
-          "impact": 2,
-          "can_close": "Ano",
-          "backup_strategy": "Restart zařízení a opětovné připojení k síti"
+      "id": "hod_pripojeni_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Ztráta připojení",
+      "render_if": "system == 'HOD' && hod_symptom == 'Ztráta připojení'",
+      "scenarios": [
+        {
+          "title": "Výpadek Wi-Fi",
+          "description": "Zařízení není připojeno k Wi-Fi.",
+          "action": "Restartujte zařízení a znovu se připojte k síti.",
+          "resolutions": [
+            {
+              "actual_defect": "Výpadek Wi-Fi připojení",
+              "resolver_group": "NETWORK Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Restart zařízení a opětovné připojení k síti"
+            }
+          ]
+        },
+        {
+          "title": "Globální výpadek sítě",
+          "description": "Stejný problém s připojením mají i ostatní zařízení.",
+          "action": "Informujte uživatele o globálním výpadku sítě. Přejděte na manuální záznam.",
+          "resolutions": [
+            {
+              "actual_defect": "Globální výpadek sítě",
+              "resolver_group": "NETWORK Support SKODA",
+              "impact": 1,
+              "backup_strategy": "Manuální záznam na papír"
+            }
+          ]
+        },
+        {
+          "title": "Výpadek jednoho zařízení",
+          "description": "Ostatní zařízení fungují správně — problém se týká jednoho zařízení.",
+          "action": "Požádejte uživatele, aby použil náhradní zařízení.",
+          "resolutions": [
+            {
+              "actual_defect": "Výpadek jednoho zařízení",
+              "resolver_group": "AMS NTT Data Service Desk",
+              "impact": 3,
+              "backup_strategy": "Použít náhradní zařízení"
+            }
+          ]
         }
-      }
+      ]
     },
     {
-      "id": "diag_hod_other_devices",
-      "type": "boolean",
-      "question": "Mají ostatní zařízení stejný problém?",
-      "render_if": "hod_symptom == 'Ztráta připojení' && diag_hod_wifi == true",
-      "on_true": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Globální výpadek sítě",
-          "resolver_group": "NETWORK Support SKODA",
-          "impact": 1,
-          "can_close": "Ne",
-          "backup_strategy": "Manuální záznam na papír"
+      "id": "hod_aplikace_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Aplikace se nespustí",
+      "render_if": "system == 'HOD' && hod_symptom == 'Aplikace se nespustí'",
+      "scenarios": [
+        {
+          "title": "Dočasná chyba aplikace",
+          "description": "Restart zařízení problém vyřešil.",
+          "action": "Restartujte zařízení. Incident lze uzavřít.",
+          "resolutions": [
+            {
+              "actual_defect": "Dočasná chyba aplikace",
+              "resolver_group": "AMS NTT Data Service Desk",
+              "impact": 3,
+              "backup_strategy": "Restart zařízení"
+            }
+          ]
+        },
+        {
+          "title": "Kritická chyba aplikace",
+          "description": "Restart zařízení nepomohl — aplikace se stále nespustí.",
+          "action": "Požádejte uživatele, aby použil náhradní zařízení nebo PC stanici.",
+          "resolutions": [
+            {
+              "actual_defect": "Kritická chyba aplikace HOD",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Použít náhradní zařízení nebo PC stanici"
+            }
+          ]
         }
-      },
-      "on_false": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Výpadek jednoho zařízení",
-          "resolver_group": "AMS NTT Data Service Desk",
-          "impact": 3,
-          "can_close": "Ano",
-          "backup_strategy": "Použít náhradní zařízení"
-        }
-      }
+      ]
     },
     {
-      "id": "diag_hod_restart",
-      "type": "boolean",
-      "question": "Pomohl restart zařízení?",
-      "render_if": "hod_symptom == 'Aplikace se nespustí'",
-      "on_true": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Dočasná chyba aplikace",
-          "resolver_group": "AMS NTT Data Service Desk",
-          "impact": 3,
-          "can_close": "Ano",
-          "backup_strategy": "Restart zařízení"
+      "id": "hod_skenovani_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Chyba při skenování",
+      "render_if": "system == 'HOD' && hod_symptom == 'Chyba při skenování'",
+      "scenarios": [
+        {
+          "title": "Poškozený čárový kód",
+          "description": "Čárový kód je poškozený nebo nečitelný.",
+          "action": "Zadejte kód ručně.",
+          "resolutions": [
+            {
+              "actual_defect": "Poškozený čárový kód",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 3,
+              "backup_strategy": "Ruční zadání kódu"
+            }
+          ]
+        },
+        {
+          "title": "Chyba skeneru",
+          "description": "Čárový kód je v pořádku, ale skener ho nedokáže přečíst.",
+          "action": "Požádejte uživatele, aby použil náhradní zařízení.",
+          "resolutions": [
+            {
+              "actual_defect": "Chyba skeneru zařízení",
+              "resolver_group": "AMS NTT Data Service Desk",
+              "impact": 2,
+              "backup_strategy": "Použít náhradní zařízení"
+            }
+          ]
         }
-      },
-      "on_false": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Kritická chyba aplikace HOD",
-          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
-          "impact": 2,
-          "can_close": "Ne",
-          "backup_strategy": "Použít náhradní zařízení nebo PC stanici"
-        }
-      }
+      ]
     },
     {
-      "id": "diag_hod_scan_barcode",
-      "type": "boolean",
-      "question": "Je čárový kód čitelný (nepoškozený)?",
-      "render_if": "hod_symptom == 'Chyba při skenování'",
-      "on_false": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Poškozený čárový kód",
-          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
-          "impact": 3,
-          "can_close": "Ano",
-          "backup_strategy": "Ruční zadání kódu"
+      "id": "hod_data_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nesprávná data",
+      "render_if": "system == 'HOD' && hod_symptom == 'Nesprávná data'",
+      "scenarios": [
+        {
+          "title": "Chyba datové synchronizace",
+          "description": "Synchronizace dat byla provedena, ale data jsou stále nesprávná.",
+          "action": "Ověřte data v SAP.",
+          "resolutions": [
+            {
+              "actual_defect": "Chyba datové synchronizace",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Ověřit data v SAP"
+            }
+          ]
+        },
+        {
+          "title": "Nesynchronizovaná data",
+          "description": "Data nebyla synchronizována.",
+          "action": "Proveďte manuální synchronizaci dat.",
+          "resolutions": [
+            {
+              "actual_defect": "Nesynchronizovaná data",
+              "resolver_group": "AMS NTT Data Service Desk",
+              "impact": 3,
+              "backup_strategy": "Provést manuální synchronizaci"
+            }
+          ]
         }
-      },
-      "on_true": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Chyba skeneru zařízení",
-          "resolver_group": "AMS NTT Data Service Desk",
-          "impact": 2,
-          "can_close": "Ano",
-          "backup_strategy": "Použít náhradní zařízení"
-        }
-      }
-    },
-    {
-      "id": "diag_hod_data_sync",
-      "type": "boolean",
-      "question": "Byla provedena synchronizace dat?",
-      "render_if": "hod_symptom == 'Nesprávná data'",
-      "on_true": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Chyba datové synchronizace",
-          "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
-          "impact": 2,
-          "can_close": "Ne",
-          "backup_strategy": "Ověřit data v SAP"
-        }
-      },
-      "on_false": {
-        "action": "stop",
-        "incident_data": {
-          "actual_defect": "Nesynchronizovaná data",
-          "resolver_group": "AMS NTT Data Service Desk",
-          "impact": 3,
-          "can_close": "Ano",
-          "backup_strategy": "Provést manuální synchronizaci"
-        }
-      }
+      ]
     },
     {
       "id": "andon_purpose",
@@ -676,9 +732,18 @@
       "question": "K čemu se systém ANDON používá?",
       "options": [
         "TODO: Doplňte účel 1",
-        "TODO: Doplňte účel 2"
+        "TODO: Doplňte účel 2",
+        "Něco jiného / Nevím"
       ],
       "render_if": "system == 'ANDON'"
+    },
+    {
+      "id": "andon_purpose_dead_end",
+      "type": "info",
+      "question": "Mimo standardní proces",
+      "description": "Kontaktujte svého nadřízeného.",
+      "render_if": "system == 'ANDON' && andon_purpose == 'Něco jiného / Nevím'",
+      "action": "stop"
     },
     {
       "id": "andon_device",
@@ -706,9 +771,18 @@
       "question": "K čemu se systém LOGIS používá?",
       "options": [
         "TODO: Doplňte účel 1",
-        "TODO: Doplňte účel 2"
+        "TODO: Doplňte účel 2",
+        "Něco jiného / Nevím"
       ],
       "render_if": "system == 'LOGIS'"
+    },
+    {
+      "id": "logis_purpose_dead_end",
+      "type": "info",
+      "question": "Mimo standardní proces",
+      "description": "Kontaktujte svého nadřízeného.",
+      "render_if": "system == 'LOGIS' && logis_purpose == 'Něco jiného / Nevím'",
+      "action": "stop"
     },
     {
       "id": "logis_device",
@@ -736,9 +810,18 @@
       "question": "K čemu se systém INEAS-MA používá?",
       "options": [
         "TODO: Doplňte účel 1",
-        "TODO: Doplňte účel 2"
+        "TODO: Doplňte účel 2",
+        "Něco jiného / Nevím"
       ],
       "render_if": "system == 'INEAS-MA'"
+    },
+    {
+      "id": "ineas_ma_purpose_dead_end",
+      "type": "info",
+      "question": "Mimo standardní proces",
+      "description": "Kontaktujte svého nadřízeného.",
+      "render_if": "system == 'INEAS-MA' && ineas_ma_purpose == 'Něco jiného / Nevím'",
+      "action": "stop"
     },
     {
       "id": "ineas_ma_device",

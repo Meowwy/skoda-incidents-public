@@ -1,0 +1,28 @@
+# Soubor: systems/hod/hod_aplikace_diagnostic.yaml
+# Popis: Diagnostika pro příznak "Aplikace se nespustí" v systému HOD
+
+steps:
+  - id: hod_aplikace_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Aplikace se nespustí"
+    render_if: "system == 'HOD' && hod_symptom == 'Aplikace se nespustí'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Dočasná chyba aplikace"
+        description: "Restart zařízení problém vyřešil."
+        action: "Restartujte zařízení. Incident lze uzavřít."
+        resolutions:
+          - actual_defect: "Dočasná chyba aplikace"
+            resolver_group: "AMS NTT Data Service Desk"
+            impact: 3
+            backup_strategy: "Restart zařízení"
+
+      # -----------------------------------------
+      - title: "Kritická chyba aplikace"
+        description: "Restart zařízení nepomohl — aplikace se stále nespustí."
+        action: "Požádejte uživatele, aby použil náhradní zařízení nebo PC stanici."
+        resolutions:
+          - actual_defect: "Kritická chyba aplikace HOD"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Použít náhradní zařízení nebo PC stanici"

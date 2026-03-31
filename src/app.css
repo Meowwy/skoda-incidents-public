@@ -649,6 +649,7 @@ button {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
+  gap: 14px;
 }
 
 .scenario-title {
@@ -665,7 +666,6 @@ button {
 
 /* Scenario question box (upper part) */
 .scenario-question-box {
-  margin-bottom: 20px;
   padding: 20px 24px;
   background: #f7fafc;
   border-radius: 10px;
@@ -678,69 +678,6 @@ button {
   font-weight: 500;
   margin: 0;
   line-height: 1.6;
-}
-
-/* Two-column answer layout */
-.answer-columns {
-  display: flex;
-  gap: 0;
-  flex: 1;
-  min-height: 0;
-  border-radius: 10px;
-  overflow: hidden;
-  border: 1px solid #e2e8f0;
-}
-
-.answer-ok {
-  background: linear-gradient(135deg, #f0faf0 0%, #e6f5e6 100%);
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  border-right: 1px solid #e2e8f0;
-  flex-shrink: 0;
-}
-
-.answer-label-ok {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #4ba82e;
-  letter-spacing: -0.3px;
-}
-
-.answer-hint-ok {
-  font-size: 0.8rem;
-  color: #5a9a42;
-  text-align: center;
-  line-height: 1.4;
-  font-weight: 500;
-}
-
-.answer-separator {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  flex-shrink: 0;
-  background: #f0f2f5;
-}
-
-.answer-nok {
-  flex: 1;
-  padding: 20px 24px;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  overflow-y: auto;
-}
-
-.answer-label-nok {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: #c53030;
-  letter-spacing: -0.3px;
 }
 
 .nok-action {
@@ -791,7 +728,6 @@ button {
 
 .resolution-row {
   display: flex;
-  justify-content: space-between;
   align-items: baseline;
   padding: 4px 0;
 }
@@ -801,13 +737,12 @@ button {
   color: #718096;
   font-weight: 500;
   flex-shrink: 0;
-  margin-right: 12px;
+  width: 140px;
 }
 
 .resolution-value {
   font-weight: 700;
   color: #1a202c;
-  text-align: right;
 }
 
 .resolution-backup {

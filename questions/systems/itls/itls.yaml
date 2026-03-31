@@ -13,15 +13,15 @@ steps:
       - "Tahače - ZLS"
       - "Evidence příjmu materiálu - ELS"
       - "Mobilní light-LOGIS - InLOG@WEB"
-      - "Kontaktujte Leitstanda" # úniková možnost, pokud uživatel neví
+      - "Něco jiného / Nevím"
     render_if: "system == 'iTLS'"
 
-  # úniková možnost — uživatel zvolil "Kontaktujte Leitstanda"
+  # úniková možnost
   - id: itls_purpose_dead_end
     type: info
     question: "Kontaktujte Leitstanda"
     description: "Tento případ nelze řešit přes tento formulář. Obraťte se na Leitstanda."
-    render_if: "system == 'iTLS' && itls_purpose == 'Kontaktujte Leitstanda'"
+    render_if: "system == 'iTLS' && itls_purpose == 'Něco jiného / Nevím'"
     action: stop
 
   # ------------------------------------------

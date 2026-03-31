@@ -3,10 +3,8 @@
 #
 # Struktura scénáře:
 #   title        — název záložky (co se děje)
-#   description  — otázka / co zkontrolovat (velký text)
-#   ok_answer    — odpověď, která znamená "je to v pořádku" (obvykle "Ano")
-#   nok_answer   — odpověď, která znamená "je problém" (obvykle "Ne")
-#   action       — doporučená akce / workaround (zobrazí se v části incidentu)
+#   description  — popis situace (velký text v horní části panelu)
+#   action       — doporučená akce / workaround
 #   resolutions  — eskalace (prázdné [] = akce samotná problém vyřeší)
 
 steps:
@@ -17,9 +15,7 @@ steps:
     scenarios:
       # -----------------------------------------
       - title: "Nefunguje na žádném zařízení"
-        description: "Funguje iTLS na jiném zařízení ve skladu?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
+        description: "iTLS nefunguje na žádném zařízení ve skladu."
         action: "Informujte uživatele o globálním výpadku. Přepněte na záložní závěsky (B závěsky)."
         resolutions:
           - actual_defect: "Globální výpadek SA/VW"
@@ -29,9 +25,7 @@ steps:
 
       # -----------------------------------------
       - title: "Nesvítí ikona WIFI"
-        description: "Svítí vlevo nahoře na displeji HDT ikona WIFI?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
+        description: "Na displeji HDT nesvítí vlevo nahoře ikona WIFI."
         action: "Zařízení nemá síťové připojení. Přepněte na záložní závěsky (B závěsky)."
         resolutions:
           - actual_defect: "Nefunkční WIFI"
@@ -41,19 +35,13 @@ steps:
 
       # -----------------------------------------
       - title: "Nesvítí ikona baterie"
-        description: "Svítí vpravo nahoře na displeji HDT ikona stavu baterie?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
-        action: "Řekněte uživateli, aby vyměnil baterii v HDT. Pokud problém přetrvává, vyměňte celé HDT."
-        resolutions:
-          - actual_defect: "Vybita baterie"
-            backup_strategy: "Výměna baterie nebo výměna HDT"
+        description: "Na displeji HDT nesvítí vpravo nahoře ikona stavu baterie."
+        action: "Řekněte uživateli, aby vyměnil baterii v HDT."
+        resolutions: []
 
       # -----------------------------------------
       - title: "HDT nejde zapnout"
-        description: "Jde zařízení zapnout?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
+        description: "Zařízení HDT nejde zapnout."
         action: "Řekněte uživateli, aby zkusil restartovat zařízení podržením tlačítka napájení."
         resolutions:
           - actual_defect: "Nefunkční HDT"
@@ -63,9 +51,7 @@ steps:
 
       # -----------------------------------------
       - title: "HDT nefunguje standardně"
-        description: "Funguje zařízení standardně po zapnutí?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
+        description: "Zařízení po zapnutí nefunguje standardně."
         action: "Řekněte uživateli, aby podržel červené tlačítko v pravém horním rohu klávesnice pro restart aplikace."
         resolutions:
           - actual_defect: "Nefunkční HDT"
@@ -75,17 +61,13 @@ steps:
 
       # -----------------------------------------
       - title: "Nejdou zadávat číslice"
-        description: "Svítí na klávesnici HDT tlačítko ALFA?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
+        description: "Na klávesnici HDT svítí tlačítko ALFA — nelze zadávat číslice."
         action: "Stiskněte tlačítko ALFA — přepne klávesnici zpět do numerického režimu."
         resolutions: []
 
       # -----------------------------------------
       - title: "Certifikát se nespustí"
-        description: "Spustí se po zapnutí iTLS certifikát?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
+        description: "Po zapnutí iTLS se nespustí certifikát."
         action: "Zkuste restartovat HDT a spustit iTLS znovu. Pokud certifikát stále nejde, eskalujte."
         resolutions:
           - actual_defect: "Nefunkční HDT"
@@ -94,8 +76,6 @@ steps:
 
       # -----------------------------------------
       - title: "Certifikát proběhl, stále nefunguje"
-        description: "Spustil se certifikát správně?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Certifikát proběhl správně, ale systém stále nefunguje."
         action: "Potvrďte certifikát tlačítkem OK a znovu se přihlaste do systému iTLS. Incident lze uzavřít."
         resolutions: []

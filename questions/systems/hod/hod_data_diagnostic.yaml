@@ -1,0 +1,28 @@
+# Soubor: systems/hod/hod_data_diagnostic.yaml
+# Popis: Diagnostika pro příznak "Nesprávná data" v systému HOD
+
+steps:
+  - id: hod_data_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nesprávná data"
+    render_if: "system == 'HOD' && hod_symptom == 'Nesprávná data'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Chyba datové synchronizace"
+        description: "Synchronizace dat byla provedena, ale data jsou stále nesprávná."
+        action: "Ověřte data v SAP."
+        resolutions:
+          - actual_defect: "Chyba datové synchronizace"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Ověřit data v SAP"
+
+      # -----------------------------------------
+      - title: "Nesynchronizovaná data"
+        description: "Data nebyla synchronizována."
+        action: "Proveďte manuální synchronizaci dat."
+        resolutions:
+          - actual_defect: "Nesynchronizovaná data"
+            resolver_group: "AMS NTT Data Service Desk"
+            impact: 3
+            backup_strategy: "Provést manuální synchronizaci"

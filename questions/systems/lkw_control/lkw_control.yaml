@@ -9,15 +9,15 @@ steps:
     options:
       - "Závodová ochrana (kontrola na bráně / v závodě)"
       - "Interní logistika (PLO) - Evidence LKW / Navádění k vykládce nebo nakládce"
-      - "Něco jiného"
+      - "Něco jiného / Nevím"
     render_if: "system == 'LKW Control x'"
 
-  # Dead End from SL2 (Dashed red line "Kontaktujte nadřízeného")
+  # úniková možnost
   - id: lkw_purpose_dead_end
     type: info
     question: "Mimo standardní proces"
     description: "Kontaktujte svého nadřízeného."
-    render_if: "system == 'LKW Control x' && lkw_purpose == 'Něco jiného'"
+    render_if: "system == 'LKW Control x' && lkw_purpose == 'Něco jiného / Nevím'"
     action: stop
 
   # 5. Jaké zařízení? (Device)

@@ -1,0 +1,38 @@
+# Soubor: systems/hod/hod_pripojeni_diagnostic.yaml
+# Popis: Diagnostika pro příznak "Ztráta připojení" v systému HOD
+
+steps:
+  - id: hod_pripojeni_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Ztráta připojení"
+    render_if: "system == 'HOD' && hod_symptom == 'Ztráta připojení'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Výpadek Wi-Fi"
+        description: "Zařízení není připojeno k Wi-Fi."
+        action: "Restartujte zařízení a znovu se připojte k síti."
+        resolutions:
+          - actual_defect: "Výpadek Wi-Fi připojení"
+            resolver_group: "NETWORK Support SKODA"
+            impact: 2
+            backup_strategy: "Restart zařízení a opětovné připojení k síti"
+
+      # -----------------------------------------
+      - title: "Globální výpadek sítě"
+        description: "Stejný problém s připojením mají i ostatní zařízení."
+        action: "Informujte uživatele o globálním výpadku sítě. Přejděte na manuální záznam."
+        resolutions:
+          - actual_defect: "Globální výpadek sítě"
+            resolver_group: "NETWORK Support SKODA"
+            impact: 1
+            backup_strategy: "Manuální záznam na papír"
+
+      # -----------------------------------------
+      - title: "Výpadek jednoho zařízení"
+        description: "Ostatní zařízení fungují správně — problém se týká jednoho zařízení."
+        action: "Požádejte uživatele, aby použil náhradní zařízení."
+        resolutions:
+          - actual_defect: "Výpadek jednoho zařízení"
+            resolver_group: "AMS NTT Data Service Desk"
+            impact: 3
+            backup_strategy: "Použít náhradní zařízení"

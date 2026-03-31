@@ -9,9 +9,7 @@ steps:
     scenarios:
       # -----------------------------------------
       - title: "Výpadek u operátora"
-        description: "Je u mobilního operátora hlášený nebo registrovaný výpadek sítě?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "U mobilního operátora je hlášený nebo registrovaný výpadek sítě."
         action: "Informujte uživatele, že se jedná o výpadek na straně operátora. Čekejte na obnovení."
         resolutions:
           - actual_defect: "Výpadek operátora"
@@ -21,9 +19,7 @@ steps:
 
       # -----------------------------------------
       - title: "Neaktivní mobilní data"
-        description: "Jsou na telematice aktivní mobilní data?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
+        description: "Na telematice nejsou aktivní mobilní data."
         action: "Kontaktujte help desk pro správné nastavení mobilních dat na zařízení."
         resolutions:
           - actual_defect: "Chybné nastavení"
@@ -33,9 +29,7 @@ steps:
 
       # -----------------------------------------
       - title: "Zapnutý režim letadlo"
-        description: "Je na telematice zapnutý režim letadlo?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Na telematice je zapnutý režim letadlo."
         action: "Řekněte uživateli, aby vypnul režim letadlo v nastavení zařízení."
         resolutions:
           - actual_defect: "Chybné nastavení"
@@ -45,9 +39,7 @@ steps:
 
       # -----------------------------------------
       - title: "Výpadek jedné telematiky"
-        description: "Fungují ostatní telematiky správně?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Ostatní telematiky fungují správně — výpadek se týká jednoho zařízení."
         action: "Jedná se o závadu jednoho zařízení. Požádejte uživatele, aby použil jiné zařízení."
         resolutions:
           - actual_defect: "Nefunkčnost 1 telematiky"
@@ -57,9 +49,7 @@ steps:
 
       # -----------------------------------------
       - title: "Výpadek více telematik"
-        description: "Vykazují stejnou závadu i další telematiky?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Stejnou závadu vykazují i další telematiky — rozsáhlý výpadek."
         action: "Jedná se o rozsáhlý výpadek. Zajistěte krizový režim dle pokynů."
         resolutions:
           - actual_defect: "Globální výpadek telematiky"

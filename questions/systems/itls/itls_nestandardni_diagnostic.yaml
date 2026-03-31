@@ -9,9 +9,7 @@ steps:
     scenarios:
       # -----------------------------------------
       - title: "Opětovné odhlašování"
-        description: "Dochází k opakovanému odhlašování uživatele ze systému?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Dochází k opakovanému odhlašování uživatele ze systému."
         action: "Zkontrolujte nastavení relace uživatele. Ověřte, zda je správně přiřazený profil."
         resolutions:
           - actual_defect: "Špatně nastaveno"
@@ -20,9 +18,7 @@ steps:
 
       # -----------------------------------------
       - title: "Odhlašování po novém releasu"
-        description: "Došlo v poslední době k aktualizaci / novému releasu iTLS?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "K odhlašování dochází po nedávné aktualizaci / novém releasu iTLS."
         action: "Ověřte, zda se problém týká více uživatelů. Pokud ano, jedná se pravděpodobně o chybu v nové verzi."
         resolutions:
           - actual_defect: "Opakované odhlašování z iTLS"
@@ -31,9 +27,7 @@ steps:
 
       # -----------------------------------------
       - title: "Nestandardní operace na displeji"
-        description: "Zobrazují se na HDT neočekávané operace nebo nesprávná data?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Na HDT se zobrazují neočekávané operace nebo nesprávná data."
         action: "Řekněte uživateli, aby kontaktoval svého Key usera pro kontrolu a opravu nastavení."
         resolutions:
           - actual_defect: "Špatně nastaveno"

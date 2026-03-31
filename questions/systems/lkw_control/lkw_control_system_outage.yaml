@@ -5,20 +5,24 @@ steps:
   - id: outage_diagnostic
     type: diagnostic
     question: "Diagnostika: Výpadek systému a chyba v rozhraní"
-    render_if: "lkw_symptom == 'Výpadek systému a chyba v rozhraní"
+    render_if: "lkw_symptom == 'Výpadek systému a chyba v rozhraní'"
     scenarios:
       # -----------------------------------------
-      - title: "Vymazání cookies"
-        description: "Zkoušel vymazat cookies z prohlížeče, historii prohlížení a mezipaměť stránek?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
-        action: "Poraďte uživateli, aby vymazal cookies z prohlížeče."
-        resolutions: []
+      - title: "Přihlašovací formulář"
+        description: "Přihlašovací formulář pro vyplnění UserID se nezobrazuje."
+        action: "Zkontrolujte, zda je výpadek ecidován i v jiných závodech. Pokud ne, zadejte požadavek na řešitelskou skupinu viz níže."
+        resolutions:
+          - actual_defect: "Chybné nastavení"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: ""
 
       # -----------------------------------------
       - title: "Data v LKW Control"
-        description: "Přitékají data do LKW Control?"
-        ok_answer: "Ne"
-        nok_answer: "Ano"
+        description: "Do LKW Control nepřitékají data."
         action: ""
-        resolutions: []
+        resolutions:
+          - actual_defect: "Chyba v rozhraní"
+            resolver_group: "nedefinováno"
+            impact: 2
+            backup_strategy: ""

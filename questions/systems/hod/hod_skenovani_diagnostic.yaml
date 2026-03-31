@@ -1,0 +1,28 @@
+# Soubor: systems/hod/hod_skenovani_diagnostic.yaml
+# Popis: Diagnostika pro příznak "Chyba při skenování" v systému HOD
+
+steps:
+  - id: hod_skenovani_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Chyba při skenování"
+    render_if: "system == 'HOD' && hod_symptom == 'Chyba při skenování'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Poškozený čárový kód"
+        description: "Čárový kód je poškozený nebo nečitelný."
+        action: "Zadejte kód ručně."
+        resolutions:
+          - actual_defect: "Poškozený čárový kód"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 3
+            backup_strategy: "Ruční zadání kódu"
+
+      # -----------------------------------------
+      - title: "Chyba skeneru"
+        description: "Čárový kód je v pořádku, ale skener ho nedokáže přečíst."
+        action: "Požádejte uživatele, aby použil náhradní zařízení."
+        resolutions:
+          - actual_defect: "Chyba skeneru zařízení"
+            resolver_group: "AMS NTT Data Service Desk"
+            impact: 2
+            backup_strategy: "Použít náhradní zařízení"

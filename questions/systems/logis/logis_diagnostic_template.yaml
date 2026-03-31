@@ -4,10 +4,8 @@
 #
 # Struktura scénáře:
 #   title        — název záložky (co se děje)
-#   description  — otázka / co zkontrolovat (velký text v horní části panelu)
-#   ok_answer    — odpověď "v pořádku" (zobrazí se vlevo, zelená část)
-#   nok_answer   — odpověď "problém" (zobrazí se vpravo, červená část)
-#   action       — doporučená akce / workaround (zobrazí se v části incidentu)
+#   description  — popis situace (velký text v horní části panelu)
+#   action       — doporučená akce / workaround
 #   resolutions  — pole eskalací (prázdné [] = akce samotná problém vyřeší)
 
 steps:
@@ -20,8 +18,6 @@ steps:
       # Scénář 1
       - title: "TODO: Název prvního kontrolního kroku"
         description: "TODO: Co se má zkontrolovat? (toto se zobrazí jako hlavní otázka)"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
         action: "TODO: Co udělat pokud je odpověď NOK"
         resolutions:
           - actual_defect: "TODO: Zjištěná závada"
@@ -33,8 +29,6 @@ steps:
       # Scénář 2
       - title: "TODO: Název druhého kontrolního kroku"
         description: "TODO: Co se má zkontrolovat?"
-        ok_answer: "Ano"
-        nok_answer: "Ne"
         action: "TODO: Co udělat pokud je odpověď NOK"
         resolutions:
           - actual_defect: "TODO: Zjištěná závada"
