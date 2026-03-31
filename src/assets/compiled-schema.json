@@ -273,34 +273,20 @@
       "scenarios": [
         {
           "title": "Vymazání cookies",
-          "description": "Zkoušel vymazat cookies z prohlížeče, historii prohlížení a mezipaměť stránek?",
+          "description": "Nejsou promazané cookies z prohlížeče, historie prohlížení a mezipaměť stránek.",
           "action": "Poraďte uživateli, aby vymazal cookies z prohlížeče.",
-          "resolutions": [
-            {
-              "actual_defect": "Chybné nastavení",
-              "resolver_group": "Uživatel sám",
-              "impact": 2,
-              "backup_strategy": "Zaškrtnout Vymazat cookies a data stránek při zavření Firefoxu"
-            }
-          ]
+          "resolutions": []
         },
         {
           "title": "Filtr pozic",
-          "description": "Má uživatel zepnutý filtr pozic?",
-          "action": "Uživatel by měl vyplnout filtr na pozice.",
-          "resolutions": [
-            {
-              "actual_defect": "Uživatel sám",
-              "resolver_group": "",
-              "impact": 2,
-              "backup_strategy": "Kontrola filtru: Řídící stanoviště – Náhled parkovacích míst … - Filtr (vpravo nahoře) položky za Fitr musí být podbarvené modře."
-            }
-          ]
+          "description": "Uživatel má zapnutý filtr pozic.",
+          "action": "Uživatel by měl vyplnout filtr na pozice. Kontrola filtru: Řídící stanoviště – Náhled parkovacích míst … - Filtr (vpravo nahoře) položky za Fitr musí být podbarvené modře.",
+          "resolutions": []
         },
         {
           "title": "Oprávnění uživatele",
-          "description": "Má uživatel oprávnění?",
-          "action": "Uživatel potřebuje oprávnění.",
+          "description": "Uživatel nemá oprávnění.",
+          "action": "",
           "resolutions": [
             {
               "actual_defect": "Chyné nastavení",
