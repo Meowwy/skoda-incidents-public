@@ -1,0 +1,24 @@
+# Soubor: systems/lkw_control/lkw_control_unable_to_login.yaml
+# Popis: Diagnostika výpadku telematiky v systému LKW Control
+
+steps:
+  - id: outage_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Výpadek systému a chyba v rozhraní"
+    render_if: "lkw_symptom == 'Výpadek systému a chyba v rozhraní"
+    scenarios:
+      # -----------------------------------------
+      - title: "Vymazání cookies"
+        description: "Zkoušel vymazat cookies z prohlížeče, historii prohlížení a mezipaměť stránek?"
+        ok_answer: "Ano"
+        nok_answer: "Ne"
+        action: "Poraďte uživateli, aby vymazal cookies z prohlížeče."
+        resolutions: []
+
+      # -----------------------------------------
+      - title: "Data v LKW Control"
+        description: "Přitékají data do LKW Control?"
+        ok_answer: "Ne"
+        nok_answer: "Ano"
+        action: ""
+        resolutions: []

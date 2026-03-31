@@ -39,8 +39,7 @@ steps:
     options:
       - "Výpadek telematiky"
       - "Nemožnost přihlášení"
-      - "Výpadek systému"
-      - "Chyba v rozhraní"
+      - "Výpadek systému a chyba v rozhraní"
       - "Prázdný seznam jízd"
       - "Chyba trasy v telematice"
       - "Uživatel má jiné písmo v LKW Control X než jeho kolegové"
@@ -51,7 +50,11 @@ steps:
   # 🩺 DIAGNOSTIC INCLUDES (HOW TO ADD NEW DRILL-DOWNS)
   # ==========================================
 
-  # If they selected "Výpadek telematiky", load the SL3 flowchart
+  # Jednotlivé diagnostiky
   - $include: "lkw_control_telematics_outage.yaml"
 
   - $include: "lkw_control_unable_to_login.yaml"
+
+  - $include: "lkw_control_system_outage.yaml"
+
+  - $include: "lkw_control_empty_trip_list.yaml"
