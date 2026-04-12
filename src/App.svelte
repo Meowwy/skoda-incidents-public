@@ -7,7 +7,7 @@
   // ==========================================
   // STATE
   // ==========================================
-  let phase = $state('location'); // 'location' | 'system' | 'finished'
+  let phase = $state('location'); // 'location' | 'system'
   let selectedArea = $state('Logistika');
   let selectedSubarea = $state('Inhouse');
   let selectedLocation = $state(null);
@@ -62,8 +62,13 @@
     const parts = [];
     if (selectedArea) parts.push({ label: selectedArea, type: 'fixed' });
     if (selectedSubarea) parts.push({ label: selectedSubarea, type: 'fixed' });
-    if (selectedLocation) parts.push({ label: selectedLocation, type: 'fixed' });
-    if (selectedWarehouse) parts.push({ label: selectedWarehouse, type: 'fixed' });
+    if (phase === 'system') {
+      parts.push({ label: selectedLocation || 'lokace nevybrána', type: selectedLocation ? 'fixed' : 'skipped' });
+      parts.push({ label: selectedWarehouse || 'sklad nevybrán', type: selectedWarehouse ? 'fixed' : 'skipped' });
+    } else {
+      if (selectedLocation) parts.push({ label: selectedLocation, type: 'fixed' });
+      if (selectedWarehouse) parts.push({ label: selectedWarehouse, type: 'fixed' });
+    }
     if (selectedSystem) parts.push({ label: selectedSystem, type: 'system' });
     for (const item of selectTrail) {
       parts.push({ label: item.answer, type: 'trail' });
@@ -153,6 +158,17 @@
     phase = 'system';
   }
 
+  function skipToSystem() {
+    answers.area = selectedArea;
+    answers.subarea = selectedSubarea;
+    answers.location = null;
+    answers.warehouse = null;
+    answers.additional_info = '';
+    selectedLocation = null;
+    selectedWarehouse = null;
+    phase = 'system';
+  }
+
   // ==========================================
   // HANDLERS - PHASE 2
   // ==========================================
@@ -230,8 +246,8 @@
     answers = preserved;
   }
 
+  // Ukončení diagnostického procesu — zobrazí modální okno s výsledkem
   function finishForm(incidentData) {
-    phase = 'finished';
     isFinished = true;
     finalResult = incidentData;
     if (incidentData) {
@@ -239,8 +255,10 @@
     }
   }
 
-  function restart() {
-    window.location.reload();
+  // Zavření modálního okna s výsledkem
+  function closeResult() {
+    isFinished = false;
+    finalResult = null;
   }
 </script>
 
@@ -260,7 +278,8 @@
         {#if i > 0}<span class="breadcrumb-sep">&rsaquo;</span>{/if}
         <span class="breadcrumb-item"
               class:breadcrumb-trail={part.type === 'trail'}
-              class:breadcrumb-system={part.type === 'system'}>
+              class:breadcrumb-system={part.type === 'system'}
+              class:breadcrumb-skipped={part.type === 'skipped'}>
           {part.label}
         </span>
       {/each}
@@ -325,6 +344,10 @@
             </button>
           {/each}
         </div>
+
+        <button class="btn-back-location" onclick={skipToSystem}>
+          Přeskočit na výběr systému
+        </button>
       </div>
 
       <!-- RIGHT PANEL -->
@@ -582,45 +605,52 @@
       {/if}
     </div>
 
-  <!-- ============================== -->
-  <!-- PHASE 3: RESULT                -->
-  <!-- ============================== -->
-  {:else if phase === 'finished'}
-    <div class="result-overlay">
-      <div class="result-card">
-        <h2>Proces dokončen</h2>
-
-        {#if finalResult}
-          <div class="result-row">
-            <span class="result-label">Zjištěná závada:</span>
-            <span class="result-value">{finalResult.actual_defect}</span>
-          </div>
-          {#if finalResult.resolver_group}
-            <div class="result-row">
-              <span class="result-label">Resolver skupina:</span>
-              <span class="result-value">{finalResult.resolver_group}</span>
-            </div>
-          {/if}
-          {#if finalResult.impact}
-            <div class="result-row">
-              <span class="result-label">Impact:</span>
-              <span class="result-value">{finalResult.impact}</span>
-            </div>
-          {/if}
-          {#if finalResult.backup_strategy}
-            <div class="result-backup">
-              <strong>Záložní strategie:</strong> {finalResult.backup_strategy}
-            </div>
-          {/if}
-        {:else}
-          <p class="result-empty">Proces byl ukončen bez vytvoření ticketu.</p>
-        {/if}
-
-        <button class="btn-restart" onclick={restart}>
-          Začít znovu
-        </button>
-      </div>
-    </div>
   {/if}
 
 </main>
+
+<!-- Modální okno s výsledkem diagnostiky -->
+{#if isFinished}
+  <div class="modal-backdrop" onclick={closeResult} onkeydown={(e) => e.key === 'Escape' && closeResult()} role="dialog" aria-modal="true" tabindex="-1">
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <div class="modal-card" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="document">
+      <button class="modal-close" onclick={closeResult} aria-label="Zavřít">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </button>
+
+      <h2>Výsledek diagnostiky</h2>
+
+      {#if finalResult}
+        <div class="result-row">
+          <span class="result-label">Zjištěná závada:</span>
+          <span class="result-value">{finalResult.actual_defect}</span>
+        </div>
+        {#if finalResult.resolver_group}
+          <div class="result-row">
+            <span class="result-label">Resolver skupina:</span>
+            <span class="result-value">{finalResult.resolver_group}</span>
+          </div>
+        {/if}
+        {#if finalResult.impact}
+          <div class="result-row">
+            <span class="result-label">Impact:</span>
+            <span class="result-value">{finalResult.impact}</span>
+          </div>
+        {/if}
+        {#if finalResult.backup_strategy}
+          <div class="result-backup">
+            <strong>Záložní strategie:</strong> {finalResult.backup_strategy}
+          </div>
+        {/if}
+      {:else}
+        <p class="result-empty">Proces byl ukončen bez vytvoření ticketu.</p>
+      {/if}
+
+      <button class="btn-close-modal" onclick={closeResult}>
+        Zavřít
+      </button>
+    </div>
+  </div>
+{/if}
