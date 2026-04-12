@@ -70,6 +70,15 @@ steps:
   # Nestandardní chování HDT — diagnostický strom
   - $include: "itls_nestandardni_diagnostic.yaml"
 
-  # Další diagnostické větve přidat sem, např.:
-  # - $include: "itls_tisk_diagnostic.yaml"
-  # - $include: "itls_prihlaseni_diagnostic.yaml"
+  # Sdílené obecné diagnostiky
+  - $include: "../obecne/obecne_vypadek_systemu.yaml"
+
+  - $include: "../obecne/obecne_nefunkcni_tisk.yaml"
+
+  - $include: "../obecne/obecne_nemoznost_prihlaseni.yaml"
+
+  - $include: "../obecne/obecne_nelze_zadat_hodnotu.yaml"
+
+  - $include: "../obecne/obecne_nepretekaji_data.yaml"
+
+  - $include: "../obecne/obecne_zablokovane_pracoviste.yaml"

@@ -1,0 +1,19 @@
+# Soubor: systems/obecne/obecne_nelze_zadat_hodnotu.yaml
+# Popis: Obecná diagnostika — nelze zadat požadovanou hodnotu — sdílená pro iTLS a další systémy
+# Použití: $include z příslušného systémového yaml souboru
+
+steps:
+  - id: obecne_nelze_zadat_hodnotu_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nelze zadat požadovanou hodnotu"
+    render_if: "itls_symptom == 'Nelze zadat požadovanou hodnotu'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Požadované položky nejsou na výběr"
+        description: "Požadované položky nejsou dostupné ve výběru nebo se zobrazují chybové hlášky. Funkčnost na ostatních zařízeních je omezena."
+        action: ""
+        resolutions:
+          - actual_defect: "Kontrola kmenových dat"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 3
+            backup_strategy: "Zadávání přes jiný výběr"

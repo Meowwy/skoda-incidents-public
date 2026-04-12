@@ -1,0 +1,28 @@
+# Soubor: systems/lkw_control/lkw_control_different_text.yaml
+# Popis: Diagnostika — jiné písmo v LKW Control X než ostatní uživatelé
+
+steps:
+  - id: text_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Jiné písmo v LKW Control X než ostatní uživatelé"
+    render_if: "lkw_symptom == 'Uživatel má jiné písmo v LKW Control X než jeho kolegové'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Vymazání cookies a cache"
+        description: "Uživatel nevymazal historii, cookies a mezipaměť stránek z prohlížeče."
+        action: "Poraďte uživateli, aby vymazal cookies, historii a mezipaměť z prohlížeče."
+        resolutions:
+          - actual_defect: "Chybné nastavení"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "Nastavení Firefoxu"
+        description: "Firefox není správně nastaven — stránky používají vlastní písma, která přepisují systémové písmo."
+        action: "Zkontrolujte nastavení Firefoxu, zda stránkám povoluje používat vlastní písma."
+        resolutions:
+          - actual_defect: "Chybné nastavení"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Není"

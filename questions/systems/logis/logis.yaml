@@ -1,6 +1,5 @@
 # Soubor: systems/logis/logis.yaml
-# Popis: Otázky pro diagnostiku systému LOGIS
-# Poznámka: Toto je šablona — doplňte skutečné otázky a možnosti
+# Popis: Otázky pro diagnostiku systému LOGIS (CICSJ)
 
 steps:
   # ------------------------------------------
@@ -10,8 +9,12 @@ steps:
     type: select
     question: "K čemu se systém LOGIS používá?"
     options:
-      - "TODO: Doplňte účel 1"
-      - "TODO: Doplňte účel 2"
+      - "Přehled pohybu a stavu zásob"
+      - "Evidence příjmu materiálu"
+      - "Evidence výdeje materiálu"
+      - "Centralizace požadavků na výdej"
+      - "Komunikace s iTLS"
+      - "Komunikace s WMS"
       - "Něco jiného / Nevím"
     render_if: "system == 'LOGIS'"
 
@@ -30,9 +33,11 @@ steps:
     type: select
     question: "Jaké zařízení používáte?"
     options:
-      - "TODO: Doplňte zařízení 1"
-      - "TODO: Doplňte zařízení 2"
-    render_if: "system == 'LOGIS'"
+      - "Logistická tiskárna"
+      - "HDT"
+      - "PC"
+      - "Něco jiného / Nevím"
+    render_if: "system == 'LOGIS' && logis_purpose != 'Něco jiného / Nevím'"
 
   # ------------------------------------------
   # Otázka 3: Co přesně nefunguje?
@@ -41,17 +46,32 @@ steps:
     type: select
     question: "Co přesně nefunguje?"
     options:
-      - "TODO: Doplňte příznak 1"
-      - "TODO: Doplňte příznak 2"
-      # Pokud potřebujete seskupit příznaky, použijte:
-      # - group: "Název skupiny"
-      #   options:
-      #     - "Příznak A"
-      #     - "Příznak B"
-    render_if: "system == 'LOGIS'"
+      - "Nefunkční LOGIS / CICSJ"
+      - "Výpadek systému"
+      - "Nepřetékají data"
+      - "Nemožnost přihlášení"
+      - "Zablokované pracoviště"
+      - "Obecná chyba HOD (Host On-Demand)"
+      - "Nefunkční tisk"
+      - "Něco jiného / Nevím"
+    render_if: "system == 'LOGIS' && logis_purpose != 'Něco jiného / Nevím'"
 
   # ==========================================
   # DIAGNOSTICKÉ VĚTVE
   # ==========================================
-  # Pro každý příznak vytvořte diagnostický soubor a vložte ho sem:
-  # - $include: "logis_NAZEV_diagnostic.yaml"
+
+  # Nefunkční LOGIS / CICSJ — diagnostický strom
+  - $include: "logis_nefunkcni_diagnostic.yaml"
+
+  # Sdílené obecné diagnostiky
+  - $include: "../obecne/obecne_vypadek_systemu.yaml"
+
+  - $include: "../obecne/obecne_nepretekaji_data.yaml"
+
+  - $include: "../obecne/obecne_nemoznost_prihlaseni.yaml"
+
+  - $include: "../obecne/obecne_zablokovane_pracoviste.yaml"
+
+  - $include: "../obecne/obecne_klient_hod.yaml"
+
+  - $include: "../obecne/obecne_nefunkcni_tisk.yaml"

@@ -1,0 +1,82 @@
+# Soubor: systems/logis/logis_nefunkcni_diagnostic.yaml
+# Popis: Diagnostika nefunkčního systému LOGIS / CICSJ
+
+steps:
+  - id: logis_nefunkcni_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nefunkční LOGIS / CICSJ"
+    render_if: "system == 'LOGIS' && logis_symptom == 'Nefunkční LOGIS / CICSJ'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Výpadek systému / zamrzlá obrazovka"
+        description: "Přihlašovací formulář pro vyplnění User-ID se nezobrazuje nebo obrazovka zamrzla."
+        action: "Ověřte, zda je výpadek evidován i v jiných závodech. Pokud ano, jde o celokoncernový výpadek."
+        resolutions:
+          - actual_defect: "Výpadek systému"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 1
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Celokoncernový výpadek"
+        description: "Výpadek je evidován i v jiných závodech."
+        action: "Eskalujte jako celokoncernový výpadek."
+        resolutions:
+          - actual_defect: "Celokoncernový výpadek"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 1
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Časový limit / nucené odhlášení"
+        description: "Z bezpečnostních důvodů byl uživateli zkrácen časový limit relace — systém jej automaticky odhlásí."
+        action: "Informujte uživatele, že odhlašování je způsobeno bezpečnostní politikou (časový limit). Pokud se chová nestandardně, eskalujte."
+        resolutions:
+          - actual_defect: "Časový limit"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 4
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Chybí ASN data — závada na EDI konvertoru"
+        description: "V systému chybí ASN data. Pravděpodobně došlo k závadě na EDI konvertoru."
+        action: "Ověřte, zda se jedná o závadu na EDI konvertoru."
+        resolutions:
+          - actual_defect: "Celokoncernový výpadek MAT"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 3
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Zablokované pracoviště"
+        description: "Uživatel postupuje nesprávně nebo má chybné nastavení."
+        action: "Ověřte správnost postupu a nastavení uživatele. Kontaktujte Key usera."
+        resolutions: []
+
+      # -----------------------------------------
+      - title: "Nechodí aktualizace do e-mailu"
+        description: "Uživatel postupuje nesprávně nebo má chybné nastavení."
+        action: "Ověřte správnost postupu a nastavení uživatele. Kontaktujte Key usera."
+        resolutions: []
+
+      # -----------------------------------------
+      # Obecná chyba HOD klienta (Host On-Demand / WOB) — dle diagramu str. 29
+      # -----------------------------------------
+      - title: "HOD klient — chybné zobrazení nebo nesprávná adresa (WOB)"
+        description: "Nezobrazí se 6 ikon s PC 3z20, neotevře se černá obrazovka s rozcestím nebo přihlašovací obrazovka HOD klienta."
+        action: "Ověřte, zda je v prohlížeči zadána aktuální adresa WOB. Pokud se obrazovka s rozcestím nebo přihlašovací okno neotevírají, jde o závadu WOB — eskalujte na VW skupinu."
+        resolutions:
+          - actual_defect: "WOB"
+            resolver_group: "VW skupina (TBD)"
+            impact: 4
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "HOD klient — nefunkční tisk A4 z černých obrazovek"
+        description: "Tisk A4 z černých obrazovek HOD klienta nefunguje."
+        action: "Nastavte tiskárnu online."
+        resolutions:
+          - actual_defect: "Špatné nastavení tiskárny"
+            resolver_group: "WCS"
+            impact: 4
+            backup_strategy: ""

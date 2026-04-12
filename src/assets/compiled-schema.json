@@ -299,6 +299,74 @@
       ]
     },
     {
+      "id": "text_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Jiné písmo v LKW Control X než ostatní uživatelé",
+      "render_if": "lkw_symptom == 'Uživatel má jiné písmo v LKW Control X než jeho kolegové'",
+      "scenarios": [
+        {
+          "title": "Vymazání cookies a cache",
+          "description": "Uživatel nevymazal historii, cookies a mezipaměť stránek z prohlížeče.",
+          "action": "Poraďte uživateli, aby vymazal cookies, historii a mezipaměť z prohlížeče.",
+          "resolutions": [
+            {
+              "actual_defect": "Chybné nastavení",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Není"
+            }
+          ]
+        },
+        {
+          "title": "Nastavení Firefoxu",
+          "description": "Firefox není správně nastaven — stránky používají vlastní písma, která přepisují systémové písmo.",
+          "action": "Zkontrolujte nastavení Firefoxu, zda stránkám povoluje používat vlastní písma.",
+          "resolutions": [
+            {
+              "actual_defect": "Chybné nastavení",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Není"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "arrival_request_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nefunkčnost zadání požadavku na příjezd LKW",
+      "render_if": "lkw_symptom == 'Nefunkčnost zadání požadavku na příjezd LKW'",
+      "scenarios": [
+        {
+          "title": "Nemožnost přihlášení",
+          "description": "Uživatel se nemůže přihlásit do aplikace.",
+          "action": "Ověřte, zda uživatel dokáže zadat přihlašovací údaje. Pokud ne, jde o nemožnost přihlášení.",
+          "resolutions": [
+            {
+              "actual_defect": "Nemožnost přihlášení",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Nelze zadat nebo zobrazit požadavek na příjezd LKW",
+          "description": "Uživatel se přihlásí, ale nedokáže zadat požadavek na příjezd LKW nebo požadavek není viditelný v systému.",
+          "action": "Ověřte, zda lze požadavek zadat. Zkontrolujte, zda je požadavek viditelný v systému.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkčnost zadání požadavku LKW",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "itls_purpose",
       "type": "select",
       "question": "K čemu se systém iTLS používá?",
@@ -521,6 +589,286 @@
       ]
     },
     {
+      "id": "obecne_vypadek_systemu_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Výpadek systému",
+      "render_if": "itls_symptom == 'Výpadek systému' || logis_symptom == 'Výpadek systému'",
+      "scenarios": [
+        {
+          "title": "Duplicita k existujícímu incidentu",
+          "description": "K tomuto výpadku již existuje Master Incident nebo jiný incident ve frontě.",
+          "action": "Přiřaďte tento incident k existujícímu Master Incidentu nebo jej označte jako duplikát.",
+          "resolutions": [
+            {
+              "actual_defect": "Duplicita k již existujícímu / Call",
+              "resolver_group": "Shodná s master incidentem",
+              "impact": 2,
+              "backup_strategy": "Shodná s master incidentem / duplicitou"
+            }
+          ]
+        },
+        {
+          "title": "Zpřístupnění funkcionalit po updatu",
+          "description": "Probíhá nasazování releasu — systém má omezené funkcionality po dobu provádění updatu.",
+          "action": "Ověřte, zda probíhá release. Informujte uživatele, že výpadek je způsoben aktualizací systému.",
+          "resolutions": [
+            {
+              "actual_defect": "Zpřístupněny všechny funkcionality po dobu provádění updatu",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 3,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_nefunkcni_tisk_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nefunkční tisk",
+      "render_if": "itls_symptom == 'Nefunkční tisk' || logis_symptom == 'Nefunkční tisk'",
+      "scenarios": [
+        {
+          "title": "Chybné nastavení tiskárny (READY / LOCAL)",
+          "description": "Na displeji tiskárny je nápis READY nebo LOCAL — tiskárna není správně nastavena nebo sdílena v síti.",
+          "action": "Zkontrolujte nastavení tiskárny s uživatelem.",
+          "resolutions": [
+            {
+              "actual_defect": "Chybné nastavení tiskárny",
+              "resolver_group": "End user",
+              "impact": 3,
+              "backup_strategy": "Tisk jinou osobou / vedoucím"
+            }
+          ]
+        },
+        {
+          "title": "Chybí papír nebo textilní páska / fólie",
+          "description": "V tiskárně chybí papír nebo textilní páska / fólie.",
+          "action": "Doplňte tiskárnu.",
+          "resolutions": [
+            {
+              "actual_defect": "Doplnění tiskárny — nesprávný postup",
+              "resolver_group": "End user",
+              "impact": 3,
+              "backup_strategy": "Tisk jinou osobou / vedoucím"
+            }
+          ]
+        },
+        {
+          "title": "Uživatel nemá oprávnění k tisku",
+          "description": "Uživatel nemá aktuální oprávnění k tisku nebo je jeho profil zastaralý.",
+          "action": "Ověřte oprávnění k tisku a kontaktujte Key usera.",
+          "resolutions": [
+            {
+              "actual_defect": "Nemá oprávnění / zastaralé",
+              "resolver_group": "Key user",
+              "impact": 4,
+              "backup_strategy": "Tisk na jiné tiskárně"
+            }
+          ]
+        },
+        {
+          "title": "Tiskárna není připojena k síti (LAN)",
+          "description": "Tiskárna nereaguje a není připojena k lokální síti.",
+          "action": "Zkontrolujte síťové připojení tiskárny.",
+          "resolutions": [
+            {
+              "actual_defect": "Nepřipojená k LAN",
+              "resolver_group": "VYROBNI KZ XX Support SKODA",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Špatné nastavení tisku v systému (LOGIS / ILS)",
+          "description": "Chybné nastavení tiskárny nebo výstupů v systému LOGIS nebo ILS.",
+          "action": "Zkontrolujte nastavení tisku a obrazovky výstupů v systému. Kontaktujte Key usera nebo WCS.",
+          "resolutions": [
+            {
+              "actual_defect": "Špatné nastavení tiskárny v systému (LOGIS, ILS)",
+              "resolver_group": "Key user / End user / WCS",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_nemoznost_prihlaseni_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nemožnost přihlášení",
+      "render_if": "itls_symptom == 'Nemožnost přihlášení' || logis_symptom == 'Nemožnost přihlášení'",
+      "scenarios": [
+        {
+          "title": "Přístup nefunguje ani přes jiné zařízení",
+          "description": "Přístup přes jiné zařízení nefunguje — uživatel nemá přidělený profil pro toto zařízení.",
+          "action": "Kontaktujte Key usera konkrétní haly pro přidělení profilu.",
+          "resolutions": []
+        },
+        {
+          "title": "Přístup nefungoval ani dříve",
+          "description": "Přístup ani dříve nefungoval — uživatel může být nezaevidován nebo deaktivován.",
+          "action": "Kontaktujte Key usera pro zaevidování uživatele.",
+          "resolutions": []
+        },
+        {
+          "title": "Uživatel měnil heslo",
+          "description": "Uživatel měnil heslo, nebo heslo nesplňuje parametry.",
+          "action": "Zkontrolujte, zda heslo splňuje požadované parametry. Resetujte heslo přes Key usera.",
+          "resolutions": []
+        },
+        {
+          "title": "Nesprávný přístupový link",
+          "description": "Uživatel používá nesprávný odkaz pro přihlášení.",
+          "action": "Ověřte správnost přístupového odkazu.",
+          "resolutions": []
+        },
+        {
+          "title": "Kolegům přihlášení také nefunguje",
+          "description": "Přihlášení nefunguje ani kolegům — pravděpodobně jde o výpadek celého systému.",
+          "action": "Ověřte u kolegů, zda se mohou přihlásit. Pokud ne, informujte Leitstand konkrétní haly.",
+          "resolutions": [
+            {
+              "actual_defect": "Výpadek",
+              "resolver_group": "Key user konkrétní haly",
+              "impact": 4,
+              "backup_strategy": "Sdělí Leitstand konkrétní haly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_nelze_zadat_hodnotu_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nelze zadat požadovanou hodnotu",
+      "render_if": "itls_symptom == 'Nelze zadat požadovanou hodnotu'",
+      "scenarios": [
+        {
+          "title": "Požadované položky nejsou na výběr",
+          "description": "Požadované položky nejsou dostupné ve výběru nebo se zobrazují chybové hlášky. Funkčnost na ostatních zařízeních je omezena.",
+          "action": "",
+          "resolutions": [
+            {
+              "actual_defect": "Kontrola kmenových dat",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 3,
+              "backup_strategy": "Zadávání přes jiný výběr"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_nepretekaji_data_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nepřetékají data / zakázky",
+      "render_if": "itls_symptom == 'Nepřetékají data/zakázky' || logis_symptom == 'Nepřetékají data'",
+      "scenarios": [
+        {
+          "title": "Nesprávný postup uživatele",
+          "description": "Uživatel postupuje nesprávně při zadávání požadavků.",
+          "action": "Ověřte správnost postupu zadávání požadavků s uživatelem nebo Leitstandem.",
+          "resolutions": [
+            {
+              "actual_defect": "Nesprávný postup uživatele",
+              "resolver_group": "Leitstand konkrétní haly",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Nefunkční HDT nebo iTLS terminály",
+          "description": "Data nejsou vidět v iTLS ani na Leitstandu — možná závada HDT nebo rozhraní iTLS.",
+          "action": "Ověřte viditelnost dat v iTLS a na Leitstandu. Zkontrolujte stav HDT terminálů.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkční HDT / rozhraní iTLS",
+              "resolver_group": "NETWORK Support SKODA / VYROBNI KZ XX Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Přepnutí na tisk B-závěsek"
+            }
+          ]
+        },
+        {
+          "title": "Vada LOGIS nebo rozhraní iTLS–LOGIS",
+          "description": "Data jsou v iTLS vidět, ale ne v LOGIS — vada LOGIS nebo rozhraní iTLS–LOGIS.",
+          "action": "Ověřte viditelnost dat v LOGIS. Eskalujte závadu rozhraní.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkční iTLS / rozhraní",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Vada INEAS-MA nebo rozhraní LOGIS–INEAS-MA",
+          "description": "Data jsou v LOGIS vidět, ale ne v INEAS-MA — vada INEAS-MA nebo rozhraní LOGIS–INEAS-MA.",
+          "action": "Ověřte viditelnost dat v INEAS-MA. Eskalujte závadu rozhraní.",
+          "resolutions": [
+            {
+              "actual_defect": "Vada LOGIS / rozhraní",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Ruční odbavování zakázek podle INEAS-MA"
+            }
+          ]
+        },
+        {
+          "title": "Vada BMA, ANDON nebo IMIS",
+          "description": "Data jsou v INEAS-MA vidět, ale ne v BMA, ANDON nebo IMIS — závada rozhraní INEAS-MA.",
+          "action": "Ověřte viditelnost dat v jednotlivých systémech. Eskalujte závadu rozhraní.",
+          "resolutions": [
+            {
+              "actual_defect": "Vada INEAS-MA / rozhraní",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_zablokovane_pracoviste_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Zablokované pracoviště",
+      "render_if": "itls_symptom == 'Zablokované pracoviště' || logis_symptom == 'Zablokované pracoviště'",
+      "scenarios": [
+        {
+          "title": "Zablokované pracoviště LOGIS",
+          "description": "Pracoviště v LOGIS je zablokované — je třeba ho uvolnit přes Leitstand nebo Key usera.",
+          "action": "Kontaktujte Leitstand konkrétní haly nebo Key usera pro uvolnění pracoviště.",
+          "resolutions": [
+            {
+              "actual_defect": "Zablokované pracoviště",
+              "resolver_group": "Leitstand konkrétní haly / Key user",
+              "impact": 4,
+              "backup_strategy": "Použití jiného pracoviště"
+            }
+          ]
+        },
+        {
+          "title": "Zablokované pracoviště iTLS / dopravní prostředek",
+          "description": "Pracoviště nebo dopravní prostředek v iTLS je zablokovaný — je třeba ho uvolnit v Leitstandu.",
+          "action": "Kontaktujte Leitstand konkrétní haly pro uvolnění pracoviště nebo dopravního prostředku v iTLS.",
+          "resolutions": [
+            {
+              "actual_defect": "Zablokované pracoviště",
+              "resolver_group": "Leitstand konkrétní haly",
+              "impact": 4,
+              "backup_strategy": "Není"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "hod_purpose",
       "type": "select",
       "question": "K čemu se HOD používá?",
@@ -717,8 +1065,9 @@
       "type": "select",
       "question": "K čemu se systém ANDON používá?",
       "options": [
-        "TODO: Doplňte účel 1",
-        "TODO: Doplňte účel 2",
+        "Odvolávání materiálu na lince",
+        "Odvolávání materiálu na svářenských věžích",
+        "Odvolávání materiálu",
         "Něco jiného / Nevím"
       ],
       "render_if": "system == 'ANDON'"
@@ -736,28 +1085,141 @@
       "type": "select",
       "question": "Jaké zařízení používáte?",
       "options": [
-        "TODO: Doplňte zařízení 1",
-        "TODO: Doplňte zařízení 2"
+        "HDT / PC",
+        "Tiskárna",
+        "Něco jiného / Nevím"
       ],
-      "render_if": "system == 'ANDON'"
+      "render_if": "system == 'ANDON' && andon_purpose != 'Něco jiného / Nevím'"
     },
     {
       "id": "andon_symptom",
       "type": "select",
       "question": "Co přesně nefunguje?",
       "options": [
-        "TODO: Doplňte příznak 1",
-        "TODO: Doplňte příznak 2"
+        "HW",
+        "SW",
+        "Něco jiného / Nevím"
       ],
-      "render_if": "system == 'ANDON'"
+      "render_if": "system == 'ANDON' && andon_purpose != 'Něco jiného / Nevím'"
+    },
+    {
+      "id": "andon_hw_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: ANDON — hardwarová závada",
+      "render_if": "system == 'ANDON' && andon_symptom == 'HW'",
+      "scenarios": [
+        {
+          "title": "Závada hardwaru",
+          "description": "Tlačítko nereaguje při odvolání, optický kabel nebo switch nejsou v pořádku.",
+          "action": "Zkontrolujte fyzický stav tlačítka, optického kabelu a switche. Pokud cokoliv nefunguje, jde o hardwarovou závadu.",
+          "resolutions": [
+            {
+              "actual_defect": "HW",
+              "resolver_group": "Údržba haly / ANDON Support Skoda / Síťaři",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "andon_sw_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: ANDON — softwarová závada",
+      "render_if": "system == 'ANDON' && andon_symptom == 'SW'",
+      "scenarios": [
+        {
+          "title": "Restart serveru",
+          "description": "Na PDA Wavelink nelze načíst stránku.",
+          "action": "Proveďte restart ANDON serveru.",
+          "resolutions": [
+            {
+              "actual_defect": "Restart serveru",
+              "resolver_group": "ANDON Support Skoda",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Výpadek PLC na hale",
+          "description": "PLC na hale nefunguje.",
+          "action": "Ověřte funkčnost PLC na hale. Pokud PLC nefunguje, eskalujte výpadek PLC.",
+          "resolutions": [
+            {
+              "actual_defect": "Výpadek PLC na hale",
+              "resolver_group": "Výrobní KZ MB Advanced Support Skoda",
+              "impact": 3,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Po stisknutí tlačítka nevznikne požadavek v ANDON klientu",
+          "description": "Po stisknutí tlačítka se požadavek nezobrazí v přehledovém formuláři ANDON.",
+          "action": "Ověřte, zda svítí stisknuté tlačítko a zda se požadavek zobrazuje v přehledovém formuláři ANDON.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkční ANDON klient",
+              "resolver_group": "ANDON Support Skoda",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Chyba v rozhraní",
+          "description": "Požadavek se nezobrazí v přehledovém formuláři ANDON přes web.",
+          "action": "Prověřte rozhraní mezi ANDON klientem a webovým formulářem.",
+          "resolutions": [
+            {
+              "actual_defect": "Chyba v rozhraní",
+              "resolver_group": "ANDON Support Skoda",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Požadavek nevznikne v HDT ANDON klientu",
+          "description": "Po stisknutí tlačítka vznikne požadavek v ANDON klientu, ale ne v HDT ANDON klientu.",
+          "action": "Ověřte, zda je na PDA vybrán správný Segment a Skupina.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkční HDT ANDON klient",
+              "resolver_group": "ANDON Support Skoda",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Požadavek nevznikne ve Web ANDON klientu",
+          "description": "Po stisknutí tlačítka vznikne požadavek v ANDON klientu, ale ne ve Web ANDON klientu.",
+          "action": "Ověřte nastavení webového ANDON klienta a správnost vybraného Segmentu a Skupiny na PDA.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkční Web ANDON klient",
+              "resolver_group": "ANDON Support Skoda",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "logis_purpose",
       "type": "select",
       "question": "K čemu se systém LOGIS používá?",
       "options": [
-        "TODO: Doplňte účel 1",
-        "TODO: Doplňte účel 2",
+        "Přehled pohybu a stavu zásob",
+        "Evidence příjmu materiálu",
+        "Evidence výdeje materiálu",
+        "Centralizace požadavků na výdej",
+        "Komunikace s iTLS",
+        "Komunikace s WMS",
         "Něco jiného / Nevím"
       ],
       "render_if": "system == 'LOGIS'"
@@ -775,20 +1237,419 @@
       "type": "select",
       "question": "Jaké zařízení používáte?",
       "options": [
-        "TODO: Doplňte zařízení 1",
-        "TODO: Doplňte zařízení 2"
+        "Logistická tiskárna",
+        "HDT",
+        "PC",
+        "Něco jiného / Nevím"
       ],
-      "render_if": "system == 'LOGIS'"
+      "render_if": "system == 'LOGIS' && logis_purpose != 'Něco jiného / Nevím'"
     },
     {
       "id": "logis_symptom",
       "type": "select",
       "question": "Co přesně nefunguje?",
       "options": [
-        "TODO: Doplňte příznak 1",
-        "TODO: Doplňte příznak 2"
+        "Nefunkční LOGIS / CICSJ",
+        "Výpadek systému",
+        "Nepřetékají data",
+        "Nemožnost přihlášení",
+        "Zablokované pracoviště",
+        "Obecná chyba HOD (Host On-Demand)",
+        "Nefunkční tisk",
+        "Něco jiného / Nevím"
       ],
-      "render_if": "system == 'LOGIS'"
+      "render_if": "system == 'LOGIS' && logis_purpose != 'Něco jiného / Nevím'"
+    },
+    {
+      "id": "logis_nefunkcni_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nefunkční LOGIS / CICSJ",
+      "render_if": "system == 'LOGIS' && logis_symptom == 'Nefunkční LOGIS / CICSJ'",
+      "scenarios": [
+        {
+          "title": "Výpadek systému / zamrzlá obrazovka",
+          "description": "Přihlašovací formulář pro vyplnění User-ID se nezobrazuje nebo obrazovka zamrzla.",
+          "action": "Ověřte, zda je výpadek evidován i v jiných závodech. Pokud ano, jde o celokoncernový výpadek.",
+          "resolutions": [
+            {
+              "actual_defect": "Výpadek systému",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 1,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Celokoncernový výpadek",
+          "description": "Výpadek je evidován i v jiných závodech.",
+          "action": "Eskalujte jako celokoncernový výpadek.",
+          "resolutions": [
+            {
+              "actual_defect": "Celokoncernový výpadek",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 1,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Časový limit / nucené odhlášení",
+          "description": "Z bezpečnostních důvodů byl uživateli zkrácen časový limit relace — systém jej automaticky odhlásí.",
+          "action": "Informujte uživatele, že odhlašování je způsobeno bezpečnostní politikou (časový limit). Pokud se chová nestandardně, eskalujte.",
+          "resolutions": [
+            {
+              "actual_defect": "Časový limit",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Chybí ASN data — závada na EDI konvertoru",
+          "description": "V systému chybí ASN data. Pravděpodobně došlo k závadě na EDI konvertoru.",
+          "action": "Ověřte, zda se jedná o závadu na EDI konvertoru.",
+          "resolutions": [
+            {
+              "actual_defect": "Celokoncernový výpadek MAT",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 3,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Zablokované pracoviště",
+          "description": "Uživatel postupuje nesprávně nebo má chybné nastavení.",
+          "action": "Ověřte správnost postupu a nastavení uživatele. Kontaktujte Key usera.",
+          "resolutions": []
+        },
+        {
+          "title": "Nechodí aktualizace do e-mailu",
+          "description": "Uživatel postupuje nesprávně nebo má chybné nastavení.",
+          "action": "Ověřte správnost postupu a nastavení uživatele. Kontaktujte Key usera.",
+          "resolutions": []
+        },
+        {
+          "title": "HOD klient — chybné zobrazení nebo nesprávná adresa (WOB)",
+          "description": "Nezobrazí se 6 ikon s PC 3z20, neotevře se černá obrazovka s rozcestím nebo přihlašovací obrazovka HOD klienta.",
+          "action": "Ověřte, zda je v prohlížeči zadána aktuální adresa WOB. Pokud se obrazovka s rozcestím nebo přihlašovací okno neotevírají, jde o závadu WOB — eskalujte na VW skupinu.",
+          "resolutions": [
+            {
+              "actual_defect": "WOB",
+              "resolver_group": "VW skupina (TBD)",
+              "impact": 4,
+              "backup_strategy": "Není"
+            }
+          ]
+        },
+        {
+          "title": "HOD klient — nefunkční tisk A4 z černých obrazovek",
+          "description": "Tisk A4 z černých obrazovek HOD klienta nefunguje.",
+          "action": "Nastavte tiskárnu online.",
+          "resolutions": [
+            {
+              "actual_defect": "Špatné nastavení tiskárny",
+              "resolver_group": "WCS",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_vypadek_systemu_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Výpadek systému",
+      "render_if": "itls_symptom == 'Výpadek systému' || logis_symptom == 'Výpadek systému'",
+      "scenarios": [
+        {
+          "title": "Duplicita k existujícímu incidentu",
+          "description": "K tomuto výpadku již existuje Master Incident nebo jiný incident ve frontě.",
+          "action": "Přiřaďte tento incident k existujícímu Master Incidentu nebo jej označte jako duplikát.",
+          "resolutions": [
+            {
+              "actual_defect": "Duplicita k již existujícímu / Call",
+              "resolver_group": "Shodná s master incidentem",
+              "impact": 2,
+              "backup_strategy": "Shodná s master incidentem / duplicitou"
+            }
+          ]
+        },
+        {
+          "title": "Zpřístupnění funkcionalit po updatu",
+          "description": "Probíhá nasazování releasu — systém má omezené funkcionality po dobu provádění updatu.",
+          "action": "Ověřte, zda probíhá release. Informujte uživatele, že výpadek je způsoben aktualizací systému.",
+          "resolutions": [
+            {
+              "actual_defect": "Zpřístupněny všechny funkcionality po dobu provádění updatu",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 3,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_nepretekaji_data_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nepřetékají data / zakázky",
+      "render_if": "itls_symptom == 'Nepřetékají data/zakázky' || logis_symptom == 'Nepřetékají data'",
+      "scenarios": [
+        {
+          "title": "Nesprávný postup uživatele",
+          "description": "Uživatel postupuje nesprávně při zadávání požadavků.",
+          "action": "Ověřte správnost postupu zadávání požadavků s uživatelem nebo Leitstandem.",
+          "resolutions": [
+            {
+              "actual_defect": "Nesprávný postup uživatele",
+              "resolver_group": "Leitstand konkrétní haly",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Nefunkční HDT nebo iTLS terminály",
+          "description": "Data nejsou vidět v iTLS ani na Leitstandu — možná závada HDT nebo rozhraní iTLS.",
+          "action": "Ověřte viditelnost dat v iTLS a na Leitstandu. Zkontrolujte stav HDT terminálů.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkční HDT / rozhraní iTLS",
+              "resolver_group": "NETWORK Support SKODA / VYROBNI KZ XX Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Přepnutí na tisk B-závěsek"
+            }
+          ]
+        },
+        {
+          "title": "Vada LOGIS nebo rozhraní iTLS–LOGIS",
+          "description": "Data jsou v iTLS vidět, ale ne v LOGIS — vada LOGIS nebo rozhraní iTLS–LOGIS.",
+          "action": "Ověřte viditelnost dat v LOGIS. Eskalujte závadu rozhraní.",
+          "resolutions": [
+            {
+              "actual_defect": "Nefunkční iTLS / rozhraní",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Vada INEAS-MA nebo rozhraní LOGIS–INEAS-MA",
+          "description": "Data jsou v LOGIS vidět, ale ne v INEAS-MA — vada INEAS-MA nebo rozhraní LOGIS–INEAS-MA.",
+          "action": "Ověřte viditelnost dat v INEAS-MA. Eskalujte závadu rozhraní.",
+          "resolutions": [
+            {
+              "actual_defect": "Vada LOGIS / rozhraní",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": "Ruční odbavování zakázek podle INEAS-MA"
+            }
+          ]
+        },
+        {
+          "title": "Vada BMA, ANDON nebo IMIS",
+          "description": "Data jsou v INEAS-MA vidět, ale ne v BMA, ANDON nebo IMIS — závada rozhraní INEAS-MA.",
+          "action": "Ověřte viditelnost dat v jednotlivých systémech. Eskalujte závadu rozhraní.",
+          "resolutions": [
+            {
+              "actual_defect": "Vada INEAS-MA / rozhraní",
+              "resolver_group": "LOGISTICKE SYSTEMY Support SKODA",
+              "impact": 2,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_nemoznost_prihlaseni_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nemožnost přihlášení",
+      "render_if": "itls_symptom == 'Nemožnost přihlášení' || logis_symptom == 'Nemožnost přihlášení'",
+      "scenarios": [
+        {
+          "title": "Přístup nefunguje ani přes jiné zařízení",
+          "description": "Přístup přes jiné zařízení nefunguje — uživatel nemá přidělený profil pro toto zařízení.",
+          "action": "Kontaktujte Key usera konkrétní haly pro přidělení profilu.",
+          "resolutions": []
+        },
+        {
+          "title": "Přístup nefungoval ani dříve",
+          "description": "Přístup ani dříve nefungoval — uživatel může být nezaevidován nebo deaktivován.",
+          "action": "Kontaktujte Key usera pro zaevidování uživatele.",
+          "resolutions": []
+        },
+        {
+          "title": "Uživatel měnil heslo",
+          "description": "Uživatel měnil heslo, nebo heslo nesplňuje parametry.",
+          "action": "Zkontrolujte, zda heslo splňuje požadované parametry. Resetujte heslo přes Key usera.",
+          "resolutions": []
+        },
+        {
+          "title": "Nesprávný přístupový link",
+          "description": "Uživatel používá nesprávný odkaz pro přihlášení.",
+          "action": "Ověřte správnost přístupového odkazu.",
+          "resolutions": []
+        },
+        {
+          "title": "Kolegům přihlášení také nefunguje",
+          "description": "Přihlášení nefunguje ani kolegům — pravděpodobně jde o výpadek celého systému.",
+          "action": "Ověřte u kolegů, zda se mohou přihlásit. Pokud ne, informujte Leitstand konkrétní haly.",
+          "resolutions": [
+            {
+              "actual_defect": "Výpadek",
+              "resolver_group": "Key user konkrétní haly",
+              "impact": 4,
+              "backup_strategy": "Sdělí Leitstand konkrétní haly"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_zablokovane_pracoviste_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Zablokované pracoviště",
+      "render_if": "itls_symptom == 'Zablokované pracoviště' || logis_symptom == 'Zablokované pracoviště'",
+      "scenarios": [
+        {
+          "title": "Zablokované pracoviště LOGIS",
+          "description": "Pracoviště v LOGIS je zablokované — je třeba ho uvolnit přes Leitstand nebo Key usera.",
+          "action": "Kontaktujte Leitstand konkrétní haly nebo Key usera pro uvolnění pracoviště.",
+          "resolutions": [
+            {
+              "actual_defect": "Zablokované pracoviště",
+              "resolver_group": "Leitstand konkrétní haly / Key user",
+              "impact": 4,
+              "backup_strategy": "Použití jiného pracoviště"
+            }
+          ]
+        },
+        {
+          "title": "Zablokované pracoviště iTLS / dopravní prostředek",
+          "description": "Pracoviště nebo dopravní prostředek v iTLS je zablokovaný — je třeba ho uvolnit v Leitstandu.",
+          "action": "Kontaktujte Leitstand konkrétní haly pro uvolnění pracoviště nebo dopravního prostředku v iTLS.",
+          "resolutions": [
+            {
+              "actual_defect": "Zablokované pracoviště",
+              "resolver_group": "Leitstand konkrétní haly",
+              "impact": 4,
+              "backup_strategy": "Není"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_klient_hod_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Obecná chyba HOD klienta (Host On-Demand)",
+      "render_if": "system == 'LOGIS' && logis_symptom == 'Obecná chyba HOD (Host On-Demand)'",
+      "scenarios": [
+        {
+          "title": "WOB — nesprávná adresa nebo chybné zobrazení",
+          "description": "Nezobrazí se 6 ikon s PC 3z20, nebo se neotevře přihlašovací obrazovka s rozcestím.",
+          "action": "Ověřte, zda je v prohlížeči zadána aktuální adresa WOB. Zkontrolujte, zda se otevírá správná černá obrazovka s rozcestím.",
+          "resolutions": [
+            {
+              "actual_defect": "WOB",
+              "resolver_group": "VW skupina (TBD)",
+              "impact": 4,
+              "backup_strategy": "Není"
+            }
+          ]
+        },
+        {
+          "title": "Nefunkční tisk A4 z HOD klienta",
+          "description": "Tisk A4 z černých obrazovek HOD klienta nefunguje.",
+          "action": "Nastavte tiskárnu online.",
+          "resolutions": [
+            {
+              "actual_defect": "Špatné nastavení tiskárny",
+              "resolver_group": "WCS",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "obecne_nefunkcni_tisk_diagnostic",
+      "type": "diagnostic",
+      "question": "Diagnostika: Nefunkční tisk",
+      "render_if": "itls_symptom == 'Nefunkční tisk' || logis_symptom == 'Nefunkční tisk'",
+      "scenarios": [
+        {
+          "title": "Chybné nastavení tiskárny (READY / LOCAL)",
+          "description": "Na displeji tiskárny je nápis READY nebo LOCAL — tiskárna není správně nastavena nebo sdílena v síti.",
+          "action": "Zkontrolujte nastavení tiskárny s uživatelem.",
+          "resolutions": [
+            {
+              "actual_defect": "Chybné nastavení tiskárny",
+              "resolver_group": "End user",
+              "impact": 3,
+              "backup_strategy": "Tisk jinou osobou / vedoucím"
+            }
+          ]
+        },
+        {
+          "title": "Chybí papír nebo textilní páska / fólie",
+          "description": "V tiskárně chybí papír nebo textilní páska / fólie.",
+          "action": "Doplňte tiskárnu.",
+          "resolutions": [
+            {
+              "actual_defect": "Doplnění tiskárny — nesprávný postup",
+              "resolver_group": "End user",
+              "impact": 3,
+              "backup_strategy": "Tisk jinou osobou / vedoucím"
+            }
+          ]
+        },
+        {
+          "title": "Uživatel nemá oprávnění k tisku",
+          "description": "Uživatel nemá aktuální oprávnění k tisku nebo je jeho profil zastaralý.",
+          "action": "Ověřte oprávnění k tisku a kontaktujte Key usera.",
+          "resolutions": [
+            {
+              "actual_defect": "Nemá oprávnění / zastaralé",
+              "resolver_group": "Key user",
+              "impact": 4,
+              "backup_strategy": "Tisk na jiné tiskárně"
+            }
+          ]
+        },
+        {
+          "title": "Tiskárna není připojena k síti (LAN)",
+          "description": "Tiskárna nereaguje a není připojena k lokální síti.",
+          "action": "Zkontrolujte síťové připojení tiskárny.",
+          "resolutions": [
+            {
+              "actual_defect": "Nepřipojená k LAN",
+              "resolver_group": "VYROBNI KZ XX Support SKODA",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        },
+        {
+          "title": "Špatné nastavení tisku v systému (LOGIS / ILS)",
+          "description": "Chybné nastavení tiskárny nebo výstupů v systému LOGIS nebo ILS.",
+          "action": "Zkontrolujte nastavení tisku a obrazovky výstupů v systému. Kontaktujte Key usera nebo WCS.",
+          "resolutions": [
+            {
+              "actual_defect": "Špatné nastavení tiskárny v systému (LOGIS, ILS)",
+              "resolver_group": "Key user / End user / WCS",
+              "impact": 4,
+              "backup_strategy": ""
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "ineas_ma_purpose",

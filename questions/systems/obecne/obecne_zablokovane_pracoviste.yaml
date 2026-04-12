@@ -1,0 +1,29 @@
+# Soubor: systems/obecne/obecne_zablokovane_pracoviste.yaml
+# Popis: Obecná diagnostika zablokovaného pracoviště — sdílená pro iTLS, LOGIS a další systémy
+# Použití: $include z příslušného systémového yaml souboru
+
+steps:
+  - id: obecne_zablokovane_pracoviste_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Zablokované pracoviště"
+    render_if: "itls_symptom == 'Zablokované pracoviště' || logis_symptom == 'Zablokované pracoviště'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Zablokované pracoviště LOGIS"
+        description: "Pracoviště v LOGIS je zablokované — je třeba ho uvolnit přes Leitstand nebo Key usera."
+        action: "Kontaktujte Leitstand konkrétní haly nebo Key usera pro uvolnění pracoviště."
+        resolutions:
+          - actual_defect: "Zablokované pracoviště"
+            resolver_group: "Leitstand konkrétní haly / Key user"
+            impact: 4
+            backup_strategy: "Použití jiného pracoviště"
+
+      # -----------------------------------------
+      - title: "Zablokované pracoviště iTLS / dopravní prostředek"
+        description: "Pracoviště nebo dopravní prostředek v iTLS je zablokovaný — je třeba ho uvolnit v Leitstandu."
+        action: "Kontaktujte Leitstand konkrétní haly pro uvolnění pracoviště nebo dopravního prostředku v iTLS."
+        resolutions:
+          - actual_defect: "Zablokované pracoviště"
+            resolver_group: "Leitstand konkrétní haly"
+            impact: 4
+            backup_strategy: ""

@@ -1,0 +1,43 @@
+# Soubor: systems/obecne/obecne_nemoznost_prihlaseni.yaml
+# Popis: Obecná diagnostika nemožnosti přihlášení — sdílená pro iTLS, LOGIS a další systémy
+# Použití: $include z příslušného systémového yaml souboru
+
+steps:
+  - id: obecne_nemoznost_prihlaseni_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nemožnost přihlášení"
+    render_if: "itls_symptom == 'Nemožnost přihlášení' || logis_symptom == 'Nemožnost přihlášení'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Přístup nefunguje ani přes jiné zařízení"
+        description: "Přístup přes jiné zařízení nefunguje — uživatel nemá přidělený profil pro toto zařízení."
+        action: "Kontaktujte Key usera konkrétní haly pro přidělení profilu."
+        resolutions: []
+
+      # -----------------------------------------
+      - title: "Přístup nefungoval ani dříve"
+        description: "Přístup ani dříve nefungoval — uživatel může být nezaevidován nebo deaktivován."
+        action: "Kontaktujte Key usera pro zaevidování uživatele."
+        resolutions: []
+
+      # -----------------------------------------
+      - title: "Uživatel měnil heslo"
+        description: "Uživatel měnil heslo, nebo heslo nesplňuje parametry."
+        action: "Zkontrolujte, zda heslo splňuje požadované parametry. Resetujte heslo přes Key usera."
+        resolutions: []
+
+      # -----------------------------------------
+      - title: "Nesprávný přístupový link"
+        description: "Uživatel používá nesprávný odkaz pro přihlášení."
+        action: "Ověřte správnost přístupového odkazu."
+        resolutions: []
+
+      # -----------------------------------------
+      - title: "Kolegům přihlášení také nefunguje"
+        description: "Přihlášení nefunguje ani kolegům — pravděpodobně jde o výpadek celého systému."
+        action: "Ověřte u kolegů, zda se mohou přihlásit. Pokud ne, informujte Leitstand konkrétní haly."
+        resolutions:
+          - actual_defect: "Výpadek"
+            resolver_group: "Key user konkrétní haly"
+            impact: 4
+            backup_strategy: "Sdělí Leitstand konkrétní haly"

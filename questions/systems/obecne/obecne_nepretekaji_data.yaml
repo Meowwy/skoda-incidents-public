@@ -1,0 +1,59 @@
+# Soubor: systems/obecne/obecne_nepretekaji_data.yaml
+# Popis: Obecná diagnostika nepřetékajících dat — sdílená pro iTLS, LOGIS a další systémy
+# Použití: $include z příslušného systémového yaml souboru
+
+steps:
+  - id: obecne_nepretekaji_data_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nepřetékají data / zakázky"
+    render_if: "itls_symptom == 'Nepřetékají data/zakázky' || logis_symptom == 'Nepřetékají data'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Nesprávný postup uživatele"
+        description: "Uživatel postupuje nesprávně při zadávání požadavků."
+        action: "Ověřte správnost postupu zadávání požadavků s uživatelem nebo Leitstandem."
+        resolutions:
+          - actual_defect: "Nesprávný postup uživatele"
+            resolver_group: "Leitstand konkrétní haly"
+            impact: 4
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Data jsou vidět v iTLS nebo na Leitstandu"
+        description: "Nefunkční HDT — možná závada HDT."
+        action: "Ověřte, zda jsou data vidět v iTLS, pokud ano, je to závada HDT."
+        resolutions:
+          - actual_defect: "Nefunkční HDT / rozhraní iTLS"
+            resolver_group: "NETWORK Support SKODA / VYROBNI KZ XX Support SKODA"
+            impact: 2
+            backup_strategy: "Přepnutí na tisk B-závěsek"
+
+      # -----------------------------------------
+      - title: "Data jsou vidět v LOGIS"
+        description: "Data jsou v LOGIS vidět — vada iTLS nebo rozhraní LOGIS-iTLS."
+        action: "Ověřte viditelnost dat v LOGIS, pokud tam jsou, jedná se o nefunkční iTLS nebo rozhraní iTLS–LOGIS."
+        resolutions:
+          - actual_defect: "Nefunkční iTLS / rozhraní"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Přepnutí na tisk B-závěsek"
+
+      # -----------------------------------------
+      - title: "Data jsou vidět v INEAS MA"
+        description: "Data jsou v INEAS MA vidět — vada LOGIS nebo rozhraní INEAS-MA - LOGIS."
+        action: "Ověřte viditelnost dat v INEAS-MA. Eskalujte závadu rozhraní."
+        resolutions:
+          - actual_defect: "Vada LOGIS / rozhraní"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: "Ruční odbavování zakázek podle INEAS-MA"
+
+      # -----------------------------------------
+      - title: "Data jsou vidět v BMA, ANDON nebo IMIS"
+        description: "Pokud data jsou v v BMA, ANDON nebo IMIS — závada INEAS-MA nebo příslušného rozhraní."
+        action: "Ověřte viditelnost dat v jednotlivých systémech."
+        resolutions:
+          - actual_defect: "Vada INEAS-MA / rozhraní"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: ""

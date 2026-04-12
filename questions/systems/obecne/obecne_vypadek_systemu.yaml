@@ -1,0 +1,29 @@
+# Soubor: systems/obecne/obecne_vypadek_systemu.yaml
+# Popis: Obecná diagnostika výpadku systému — sdílená pro iTLS, LOGIS a další systémy
+# Použití: $include z příslušného systémového yaml souboru
+
+steps:
+  - id: obecne_vypadek_systemu_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Výpadek systému"
+    render_if: "itls_symptom == 'Výpadek systému' || logis_symptom == 'Výpadek systému'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Duplicita k existujícímu incidentu"
+        description: "K tomuto výpadku již existuje Master Incident nebo jiný incident ve frontě."
+        action: "Přiřaďte tento incident k existujícímu Master Incidentu nebo jej označte jako duplikát."
+        resolutions:
+          - actual_defect: "Duplicita k již existujícímu / Call"
+            resolver_group: "Shodná s master incidentem"
+            impact: 2
+            backup_strategy: "Shodná s master incidentem / duplicitou"
+
+      # -----------------------------------------
+      - title: "Zpřístupnění funkcionalit po updatu"
+        description: "Probíhá nasazování releasu — systém má omezené funkcionality po dobu provádění updatu."
+        action: "Ověřte, zda probíhá release. Informujte uživatele, že výpadek je způsoben aktualizací systému."
+        resolutions:
+          - actual_defect: "Zpřístupněny všechny funkcionality po dobu provádění updatu"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 3
+            backup_strategy: ""

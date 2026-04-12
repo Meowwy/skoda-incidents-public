@@ -1,0 +1,68 @@
+# Soubor: systems/andon/andon_sw_diagnostic.yaml
+# Popis: Diagnostika softwarové závady systému ANDON (pokrývá SW I i SW II z metodiky)
+
+steps:
+  - id: andon_sw_diagnostic
+    type: diagnostic
+    question: "Diagnostika: ANDON — softwarová závada"
+    render_if: "system == 'ANDON' && andon_symptom == 'SW'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Restart serveru"
+        description: "Na PDA Wavelink nelze načíst stránku."
+        action: "Proveďte restart ANDON serveru."
+        resolutions:
+          - actual_defect: "Restart serveru"
+            resolver_group: "ANDON Support Skoda"
+            impact: 4
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Výpadek PLC na hale"
+        description: "PLC na hale nefunguje."
+        action: "Ověřte funkčnost PLC na hale. Pokud PLC nefunguje, eskalujte výpadek PLC."
+        resolutions:
+          - actual_defect: "Výpadek PLC na hale"
+            resolver_group: "Výrobní KZ MB Advanced Support Skoda"
+            impact: 3
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Po stisknutí tlačítka nevznikne požadavek v ANDON klientu"
+        description: "Po stisknutí tlačítka se požadavek nezobrazí v přehledovém formuláři ANDON."
+        action: "Ověřte, zda svítí stisknuté tlačítko a zda se požadavek zobrazuje v přehledovém formuláři ANDON."
+        resolutions:
+          - actual_defect: "Nefunkční ANDON klient"
+            resolver_group: "ANDON Support Skoda"
+            impact: 2
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Chyba v rozhraní"
+        description: "Požadavek se nezobrazí v přehledovém formuláři ANDON přes web."
+        action: "Prověřte rozhraní mezi ANDON klientem a webovým formulářem."
+        resolutions:
+          - actual_defect: "Chyba v rozhraní"
+            resolver_group: "ANDON Support Skoda"
+            impact: 2
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Požadavek nevznikne v HDT ANDON klientu"
+        description: "Po stisknutí tlačítka vznikne požadavek v ANDON klientu, ale ne v HDT ANDON klientu."
+        action: "Ověřte, zda je na PDA vybrán správný Segment a Skupina."
+        resolutions:
+          - actual_defect: "Nefunkční HDT ANDON klient"
+            resolver_group: "ANDON Support Skoda"
+            impact: 2
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Požadavek nevznikne ve Web ANDON klientu"
+        description: "Po stisknutí tlačítka vznikne požadavek v ANDON klientu, ale ne ve Web ANDON klientu."
+        action: "Ověřte nastavení webového ANDON klienta a správnost vybraného Segmentu a Skupiny na PDA."
+        resolutions:
+          - actual_defect: "Nefunkční Web ANDON klient"
+            resolver_group: "ANDON Support Skoda"
+            impact: 2
+            backup_strategy: ""

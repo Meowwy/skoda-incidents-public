@@ -1,0 +1,18 @@
+# Soubor: systems/andon/andon_hw_diagnostic.yaml
+# Popis: Diagnostika hardwarové závady systému ANDON
+
+steps:
+  - id: andon_hw_diagnostic
+    type: diagnostic
+    question: "Diagnostika: ANDON — hardwarová závada"
+    render_if: "system == 'ANDON' && andon_symptom == 'HW'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Závada hardwaru"
+        description: "Tlačítko nereaguje při odvolání, optický kabel nebo switch nejsou v pořádku."
+        action: "Zkontrolujte fyzický stav tlačítka, optického kabelu a switche. Pokud cokoliv nefunguje, jde o hardwarovou závadu."
+        resolutions:
+          - actual_defect: "HW"
+            resolver_group: "Údržba haly / ANDON Support Skoda / Síťaři"
+            impact: 2
+            backup_strategy: ""

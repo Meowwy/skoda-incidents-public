@@ -1,0 +1,28 @@
+# Soubor: systems/lkw_control/lkw_control_arrival_request.yaml
+# Popis: Diagnostika — nefunkčnost zadání požadavku na příjezd LKW
+
+steps:
+  - id: arrival_request_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nefunkčnost zadání požadavku na příjezd LKW"
+    render_if: "lkw_symptom == 'Nefunkčnost zadání požadavku na příjezd LKW'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Nemožnost přihlášení"
+        description: "Uživatel se nemůže přihlásit do aplikace."
+        action: "Ověřte, zda uživatel dokáže zadat přihlašovací údaje. Pokud ne, jde o nemožnost přihlášení."
+        resolutions:
+          - actual_defect: "Nemožnost přihlášení"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Nelze zadat nebo zobrazit požadavek na příjezd LKW"
+        description: "Uživatel se přihlásí, ale nedokáže zadat požadavek na příjezd LKW nebo požadavek není viditelný v systému."
+        action: "Ověřte, zda lze požadavek zadat. Zkontrolujte, zda je požadavek viditelný v systému."
+        resolutions:
+          - actual_defect: "Nefunkčnost zadání požadavku LKW"
+            resolver_group: "LOGISTICKE SYSTEMY Support SKODA"
+            impact: 2
+            backup_strategy: ""

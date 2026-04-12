@@ -1,0 +1,30 @@
+# Soubor: systems/obecne/obecne_klient_hod.yaml
+# Popis: Diagnostika obecné chyby HOD klienta (Host On-Demand / WOB) — sdílená pro LOGIS a další systémy
+# Poznámka: HOD zde znamená "Host On-Demand" (webový terminál), nikoliv systém Handling of Deliveries
+# Použití: $include z příslušného systémového yaml souboru
+
+steps:
+  - id: obecne_klient_hod_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Obecná chyba HOD klienta (Host On-Demand)"
+    render_if: "system == 'LOGIS' && logis_symptom == 'Obecná chyba HOD (Host On-Demand)'"
+    scenarios:
+      # -----------------------------------------
+      - title: "WOB — nesprávná adresa nebo chybné zobrazení"
+        description: "Nezobrazí se 6 ikon s PC 3z20, nebo se neotevře přihlašovací obrazovka s rozcestím."
+        action: "Ověřte, zda je v prohlížeči zadána aktuální adresa WOB. Zkontrolujte, zda se otevírá správná černá obrazovka s rozcestím."
+        resolutions:
+          - actual_defect: "WOB"
+            resolver_group: "VW skupina (TBD)"
+            impact: 4
+            backup_strategy: "Není"
+
+      # -----------------------------------------
+      - title: "Nefunkční tisk A4 z HOD klienta"
+        description: "Tisk A4 z černých obrazovek HOD klienta nefunguje."
+        action: "Nastavte tiskárnu online."
+        resolutions:
+          - actual_defect: "Špatné nastavení tiskárny"
+            resolver_group: "WCS"
+            impact: 4
+            backup_strategy: ""

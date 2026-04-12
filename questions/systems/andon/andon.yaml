@@ -1,6 +1,5 @@
 # Soubor: systems/andon/andon.yaml
 # Popis: Otázky pro diagnostiku systému ANDON
-# Poznámka: Toto je šablona — doplňte skutečné otázky a možnosti
 
 steps:
   # ------------------------------------------
@@ -10,8 +9,9 @@ steps:
     type: select
     question: "K čemu se systém ANDON používá?"
     options:
-      - "TODO: Doplňte účel 1"
-      - "TODO: Doplňte účel 2"
+      - "Odvolávání materiálu na lince"
+      - "Odvolávání materiálu na svářenských věžích"
+      - "Odvolávání materiálu"
       - "Něco jiného / Nevím"
     render_if: "system == 'ANDON'"
 
@@ -30,9 +30,10 @@ steps:
     type: select
     question: "Jaké zařízení používáte?"
     options:
-      - "TODO: Doplňte zařízení 1"
-      - "TODO: Doplňte zařízení 2"
-    render_if: "system == 'ANDON'"
+      - "HDT / PC"
+      - "Tiskárna"
+      - "Něco jiného / Nevím"
+    render_if: "system == 'ANDON' && andon_purpose != 'Něco jiného / Nevím'"
 
   # ------------------------------------------
   # Otázka 3: Co přesně nefunguje?
@@ -41,17 +42,15 @@ steps:
     type: select
     question: "Co přesně nefunguje?"
     options:
-      - "TODO: Doplňte příznak 1"
-      - "TODO: Doplňte příznak 2"
-      # Pokud potřebujete seskupit příznaky, použijte:
-      # - group: "Název skupiny"
-      #   options:
-      #     - "Příznak A"
-      #     - "Příznak B"
-    render_if: "system == 'ANDON'"
+      - "HW"
+      - "SW"
+      - "Něco jiného / Nevím"
+    render_if: "system == 'ANDON' && andon_purpose != 'Něco jiného / Nevím'"
 
   # ==========================================
   # DIAGNOSTICKÉ VĚTVE
   # ==========================================
-  # Pro každý příznak vytvořte diagnostický soubor a vložte ho sem:
-  # - $include: "andon_NAZEV_diagnostic.yaml"
+
+  - $include: "andon_hw_diagnostic.yaml"
+
+  - $include: "andon_sw_diagnostic.yaml"

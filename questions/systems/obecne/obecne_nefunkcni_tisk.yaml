@@ -1,0 +1,59 @@
+# Soubor: systems/obecne/obecne_nefunkcni_tisk.yaml
+# Popis: Obecná diagnostika nefunkčního tisku — sdílená pro iTLS, LOGIS a další systémy
+# Použití: $include z příslušného systémového yaml souboru
+
+steps:
+  - id: obecne_nefunkcni_tisk_diagnostic
+    type: diagnostic
+    question: "Diagnostika: Nefunkční tisk"
+    render_if: "itls_symptom == 'Nefunkční tisk' || logis_symptom == 'Nefunkční tisk'"
+    scenarios:
+      # -----------------------------------------
+      - title: "Chybné nastavení tiskárny (READY / LOCAL)"
+        description: "Na displeji tiskárny je nápis READY nebo LOCAL — tiskárna není správně nastavena nebo sdílena v síti."
+        action: "Zkontrolujte nastavení tiskárny s uživatelem."
+        resolutions:
+          - actual_defect: "Chybné nastavení tiskárny"
+            resolver_group: "End user"
+            impact: 3
+            backup_strategy: "Tisk jinou osobou / vedoucím"
+
+      # -----------------------------------------
+      - title: "Chybí papír nebo textilní páska / fólie"
+        description: "V tiskárně chybí papír nebo textilní páska / fólie."
+        action: "Doplňte tiskárnu."
+        resolutions:
+          - actual_defect: "Doplnění tiskárny — nesprávný postup"
+            resolver_group: "End user"
+            impact: 3
+            backup_strategy: "Tisk jinou osobou / vedoucím"
+
+      # -----------------------------------------
+      - title: "Uživatel nemá oprávnění k tisku"
+        description: "Uživatel nemá aktuální oprávnění k tisku nebo je jeho profil zastaralý."
+        action: "Ověřte oprávnění k tisku a kontaktujte Key usera."
+        resolutions:
+          - actual_defect: "Nemá oprávnění / zastaralé"
+            resolver_group: "Key user"
+            impact: 4
+            backup_strategy: "Tisk na jiné tiskárně"
+
+      # -----------------------------------------
+      - title: "Tiskárna není připojena k síti (LAN)"
+        description: "Tiskárna nereaguje a není připojena k lokální síti."
+        action: "Zkontrolujte síťové připojení tiskárny."
+        resolutions:
+          - actual_defect: "Nepřipojená k LAN"
+            resolver_group: "VYROBNI KZ XX Support SKODA"
+            impact: 4
+            backup_strategy: ""
+
+      # -----------------------------------------
+      - title: "Špatné nastavení tisku v systému (LOGIS / ILS)"
+        description: "Chybné nastavení tiskárny nebo výstupů v systému LOGIS nebo ILS."
+        action: "Zkontrolujte nastavení tisku a obrazovky výstupů v systému. Kontaktujte Key usera nebo WCS."
+        resolutions:
+          - actual_defect: "Špatné nastavení tiskárny v systému (LOGIS, ILS)"
+            resolver_group: "Key user / End user / WCS"
+            impact: 4
+            backup_strategy: ""

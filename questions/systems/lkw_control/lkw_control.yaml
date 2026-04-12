@@ -2,7 +2,6 @@
 # Description: Context and symptom selection for LKW Control
 
 steps:
-  # 4. K čemu se používá? (Use Case)
   - id: lkw_purpose
     type: select
     question: "K čemu se systém používá?"
@@ -20,7 +19,6 @@ steps:
     render_if: "system == 'LKW Control x' && lkw_purpose == 'Něco jiného / Nevím'"
     action: stop
 
-  # 5. Jaké zařízení? (Device)
   - id: lkw_device
     type: select
     question: "Jaké zařízení používáte?"
@@ -32,7 +30,6 @@ steps:
       - "Syncro Supply Center"
     render_if: "system == 'LKW Control x' && lkw_purpose != 'Něco jiného'"
 
-  # 6. Co nefunguje? (Main Symptom)
   - id: lkw_symptom
     type: select
     question: "Co přesně nefunguje?"
@@ -47,10 +44,9 @@ steps:
     render_if: "system == 'LKW Control x' && lkw_purpose != 'Něco jiného'"
 
   # ==========================================
-  # 🩺 DIAGNOSTIC INCLUDES (HOW TO ADD NEW DRILL-DOWNS)
+  # DIAGNOSTICKÉ VĚTVE
   # ==========================================
 
-  # Jednotlivé diagnostiky
   - $include: "lkw_control_telematics_outage.yaml"
 
   - $include: "lkw_control_unable_to_login.yaml"
@@ -58,3 +54,7 @@ steps:
   - $include: "lkw_control_system_outage.yaml"
 
   - $include: "lkw_control_empty_trip_list.yaml"
+
+  - $include: "lkw_control_different_text.yaml"
+
+  - $include: "lkw_control_arrival_request.yaml"
