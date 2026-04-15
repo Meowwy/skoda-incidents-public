@@ -341,16 +341,3 @@ steps:
 6. **Ověřte**, že název systému v `render_if` odpovídá přesně názvu v `main.yaml` → `options`
 7. **Zkompilujte** příkazem `npm run build-schema`
 8. **Ověřte** aplikaci příkazem `npm run dev`
-
-### Šablony k vyplnění
-
-Pro systémy **ANDON**, **LOGIS** a **INEAS-MA** jsou připravené šablony ve složkách:
-
-- `questions/systems/andon/`
-- `questions/systems/logis/`
-- `questions/systems/ineas_ma/`
-
-Každá složka obsahuje:
-
-- `SYSTÉM.yaml` — hlavní soubor s TODO položkami k vyplnění
-- `SYSTÉM_diagnostic_template.yaml` — vzorový diagnostický soubor (přejmenujte a duplikujte podle potřeby)
