@@ -7,12 +7,12 @@
   // ==========================================
   // STATE
   // ==========================================
-  let phase = $state('location'); // 'location' | 'system'
-  let selectedArea = $state('Logistika');
-  let selectedSubarea = $state('Inhouse');
+  let phase = $state("location"); // 'location' | 'system'
+  let selectedArea = $state("Logistika");
+  let selectedSubarea = $state("Inhouse");
   let selectedLocation = $state(null);
   let selectedWarehouse = $state(null);
-  let additionalInfo = $state('');
+  let additionalInfo = $state("");
   let selectedSystem = $state(null);
   let answers = $state({});
   let currentStepIndex = $state(-1);
@@ -24,24 +24,34 @@
   // ==========================================
   // STATIC DATA (from compiled-warehouses.json)
   // ==========================================
-  const locations = warehousesData.locations.map(l => l.name);
-  const warehouseMap = Object.fromEntries(warehousesData.locations.map(l => [l.name, l.warehouses]));
+  const locations = warehousesData.locations.map((l) => l.name);
+  const warehouseMap = Object.fromEntries(
+    warehousesData.locations.map((l) => [l.name, l.warehouses]),
+  );
 
-  const subareas = ['Inhouse', 'Inbound', 'Outbound'];
+  const subareas = ["Inhouse", "Inbound", "Outbound"];
 
   // ==========================================
   // DERIVED
   // ==========================================
-  let systemStep = $derived(schema.steps.find(s => s.id === 'system'));
+  let systemStep = $derived(schema.steps.find((s) => s.id === "system"));
   let systemOptions = $derived(systemStep ? systemStep.options : []);
-  let availableWarehouses = $derived(selectedLocation ? (warehouseMap[selectedLocation] || []) : []);
-  let currentStep = $derived(currentStepIndex >= 0 && currentStepIndex < schema.steps.length ? schema.steps[currentStepIndex] : null);
+  let availableWarehouses = $derived(
+    selectedLocation ? warehouseMap[selectedLocation] || [] : [],
+  );
+  let currentStep = $derived(
+    currentStepIndex >= 0 && currentStepIndex < schema.steps.length
+      ? schema.steps[currentStepIndex]
+      : null,
+  );
   let canProceedLocation = $derived(selectedWarehouse !== null);
-  let systemPanelCollapsed = $derived(phase === 'system' && selectedSystem !== null && currentStepIndex >= 0);
+  let systemPanelCollapsed = $derived(
+    phase === "system" && selectedSystem !== null && currentStepIndex >= 0,
+  );
 
   // Reset scenario selection when navigating to a new diagnostic step
   $effect(() => {
-    if (currentStep?.type === 'diagnostic') {
+    if (currentStep?.type === "diagnostic") {
       selectedScenarioIndex = 0;
     }
   });
@@ -51,7 +61,7 @@
     const trail = [];
     for (const idx of history) {
       const step = schema.steps[idx];
-      if (step.type === 'select') {
+      if (step.type === "select") {
         trail.push({ step, answer: answers[step.id] });
       }
     }
@@ -60,22 +70,33 @@
 
   let breadcrumb = $derived.by(() => {
     const parts = [];
-    if (selectedArea) parts.push({ label: selectedArea, type: 'fixed' });
-    if (selectedSubarea) parts.push({ label: selectedSubarea, type: 'fixed' });
-    if (phase === 'system') {
-      parts.push({ label: selectedLocation || 'lokace nevybrána', type: selectedLocation ? 'fixed' : 'skipped' });
-      parts.push({ label: selectedWarehouse || 'sklad nevybrán', type: selectedWarehouse ? 'fixed' : 'skipped' });
+    if (selectedArea) parts.push({ label: selectedArea, type: "fixed" });
+    if (selectedSubarea) parts.push({ label: selectedSubarea, type: "fixed" });
+    if (phase === "system") {
+      parts.push({
+        label: selectedLocation || "lokace nevybrána",
+        type: selectedLocation ? "fixed" : "skipped",
+      });
+      parts.push({
+        label: selectedWarehouse || "sklad nevybrán",
+        type: selectedWarehouse ? "fixed" : "skipped",
+      });
     } else {
-      if (selectedLocation) parts.push({ label: selectedLocation, type: 'fixed' });
-      if (selectedWarehouse) parts.push({ label: selectedWarehouse, type: 'fixed' });
+      if (selectedLocation)
+        parts.push({ label: selectedLocation, type: "fixed" });
+      if (selectedWarehouse)
+        parts.push({ label: selectedWarehouse, type: "fixed" });
     }
-    if (selectedSystem) parts.push({ label: selectedSystem, type: 'system' });
+    if (selectedSystem) parts.push({ label: selectedSystem, type: "system" });
     for (const item of selectTrail) {
-      parts.push({ label: item.answer, type: 'trail' });
+      parts.push({ label: item.answer, type: "trail" });
     }
-    if (currentStep && currentStep.type !== 'select') {
+    if (currentStep && currentStep.type !== "select") {
       const q = currentStep.question;
-      parts.push({ label: q.length > 40 ? q.substring(0, 40) + '...' : q, type: 'step' });
+      parts.push({
+        label: q.length > 40 ? q.substring(0, 40) + "..." : q,
+        type: "step",
+      });
     }
     return parts;
   });
@@ -84,7 +105,7 @@
   // LOGO MAPPING
   // ==========================================
   function getLogoPath(systemName) {
-    const key = systemName.toLowerCase().replace(/\s+/g, '_');
+    const key = systemName.toLowerCase().replace(/\s+/g, "_");
     return `/logos/${key}.svg`;
   }
 
@@ -104,7 +125,7 @@
   }
 
   function findSystemStepIndex() {
-    return schema.steps.findIndex(s => s.id === 'system');
+    return schema.steps.findIndex((s) => s.id === "system");
   }
 
   function advanceToNextValidStep(startIndex) {
@@ -114,14 +135,14 @@
       const stepToCheck = schema.steps[nextIndex];
 
       // Skip the system step itself (handled by UI)
-      if (stepToCheck.id === 'system') {
+      if (stepToCheck.id === "system") {
         nextIndex++;
         continue;
       }
 
-      if (stepToCheck.type === 'hidden') {
+      if (stepToCheck.type === "hidden") {
         if (evaluateCondition(stepToCheck.render_if, answers)) {
-          answers[stepToCheck.id] = stepToCheck.value ?? 'system_user_123';
+          answers[stepToCheck.id] = stepToCheck.value ?? "system_user_123";
         }
         nextIndex++;
         continue;
@@ -155,7 +176,7 @@
     answers.location = selectedLocation;
     answers.warehouse = selectedWarehouse;
     answers.additional_info = additionalInfo;
-    phase = 'system';
+    phase = "system";
   }
 
   function skipToSystem() {
@@ -163,10 +184,10 @@
     answers.subarea = selectedSubarea;
     answers.location = null;
     answers.warehouse = null;
-    answers.additional_info = '';
+    answers.additional_info = "";
     selectedLocation = null;
     selectedWarehouse = null;
-    phase = 'system';
+    phase = "system";
   }
 
   // ==========================================
@@ -193,15 +214,15 @@
 
     const val = answers[currentStep.id];
 
-    if (val === true && currentStep.on_true?.action === 'stop') {
+    if (val === true && currentStep.on_true?.action === "stop") {
       finishForm(currentStep.on_true.incident_data);
       return;
     }
-    if (val === false && currentStep.on_false?.action === 'stop') {
+    if (val === false && currentStep.on_false?.action === "stop") {
       finishForm(currentStep.on_false.incident_data);
       return;
     }
-    if (currentStep.action === 'stop') {
+    if (currentStep.action === "stop") {
       finishForm(null);
       return;
     }
@@ -221,11 +242,17 @@
       currentStepIndex = -1;
       selectedSystem = null;
       // Clean system-specific answers, keep location data
-      const preserved = { area: answers.area, subarea: answers.subarea, location: answers.location, warehouse: answers.warehouse, additional_info: answers.additional_info };
+      const preserved = {
+        area: answers.area,
+        subarea: answers.subarea,
+        location: answers.location,
+        warehouse: answers.warehouse,
+        additional_info: answers.additional_info,
+      };
       answers = preserved;
     } else {
       // Go back to location phase
-      phase = 'location';
+      phase = "location";
     }
   }
 
@@ -233,16 +260,28 @@
     currentStepIndex = -1;
     selectedSystem = null;
     history = [];
-    const preserved = { area: answers.area, subarea: answers.subarea, location: answers.location, warehouse: answers.warehouse, additional_info: answers.additional_info };
+    const preserved = {
+      area: answers.area,
+      subarea: answers.subarea,
+      location: answers.location,
+      warehouse: answers.warehouse,
+      additional_info: answers.additional_info,
+    };
     answers = preserved;
   }
 
   function goBackToLocation() {
-    phase = 'location';
+    phase = "location";
     selectedSystem = null;
     currentStepIndex = -1;
     history = [];
-    const preserved = { area: answers.area, subarea: answers.subarea, location: answers.location, warehouse: answers.warehouse, additional_info: answers.additional_info };
+    const preserved = {
+      area: answers.area,
+      subarea: answers.subarea,
+      location: answers.location,
+      warehouse: answers.warehouse,
+      additional_info: answers.additional_info,
+    };
     answers = preserved;
   }
 
@@ -251,7 +290,7 @@
     isFinished = true;
     finalResult = incidentData;
     if (incidentData) {
-      console.log('SENDING TO PHP BACKEND:', { answers, incidentData });
+      console.log("SENDING TO PHP BACKEND:", { answers, incidentData });
     }
   }
 
@@ -270,16 +309,17 @@
 </header>
 
 <main class="app-main">
-
   <!-- UNIVERSAL BREADCRUMB -->
   {#if breadcrumb.length > 0}
     <div class="breadcrumb">
       {#each breadcrumb as part, i (i)}
         {#if i > 0}<span class="breadcrumb-sep">&rsaquo;</span>{/if}
-        <span class="breadcrumb-item"
-              class:breadcrumb-trail={part.type === 'trail'}
-              class:breadcrumb-system={part.type === 'system'}
-              class:breadcrumb-skipped={part.type === 'skipped'}>
+        <span
+          class="breadcrumb-item"
+          class:breadcrumb-trail={part.type === "trail"}
+          class:breadcrumb-system={part.type === "system"}
+          class:breadcrumb-skipped={part.type === "skipped"}
+        >
           {part.label}
         </span>
       {/each}
@@ -289,7 +329,7 @@
   <!-- ============================== -->
   <!-- PHASE 1: LOCATION SELECTION    -->
   <!-- ============================== -->
-  {#if phase === 'location'}
+  {#if phase === "location"}
     <div class="dashboard-layout">
       <!-- LEFT PANEL -->
       <div class="left-panel">
@@ -297,14 +337,13 @@
         <div class="area-tabs">
           <button
             class="area-tab {selectedArea === 'Logistika' ? 'active' : ''}"
-            onclick={() => { selectedArea = 'Logistika'; }}
+            onclick={() => {
+              selectedArea = "Logistika";
+            }}
           >
             Logistika
           </button>
-          <button
-            class="area-tab disabled"
-            disabled
-          >
+          <button class="area-tab disabled" disabled>
             Výroba
             <span class="coming-soon">Připravujeme</span>
           </button>
@@ -315,7 +354,9 @@
           {#each subareas as sub (sub)}
             <button
               class="subarea-pill {selectedSubarea === sub ? 'active' : ''}"
-              onclick={() => { selectedSubarea = sub; }}
+              onclick={() => {
+                selectedSubarea = sub;
+              }}
             >
               {sub}
             </button>
@@ -326,7 +367,9 @@
         <div class="location-grid">
           {#each locations.slice(0, 4) as loc (loc)}
             <button
-              class="location-panel {selectedLocation === loc ? 'selected' : ''}"
+              class="location-panel {selectedLocation === loc
+                ? 'selected'
+                : ''}"
               onclick={() => selectLocation(loc)}
             >
               {loc}
@@ -337,7 +380,9 @@
 
           {#each locations.slice(4) as loc (loc)}
             <button
-              class="location-panel {selectedLocation === loc ? 'selected' : ''}"
+              class="location-panel {selectedLocation === loc
+                ? 'selected'
+                : ''}"
               onclick={() => selectLocation(loc)}
             >
               {loc}
@@ -353,12 +398,18 @@
       <!-- RIGHT PANEL -->
       {#if selectedLocation}
         <div class="right-panel">
-          <h2 class="panel-heading">Dostupné sklady <span class="location-badge">{selectedLocation}</span></h2>
+          <h2 class="panel-heading">
+            Dostupné sklady <span class="location-badge"
+              >{selectedLocation}</span
+            >
+          </h2>
 
           <div class="warehouse-grid">
             {#each availableWarehouses as wh (wh)}
               <button
-                class="warehouse-btn {selectedWarehouse === wh ? 'selected' : ''}"
+                class="warehouse-btn {selectedWarehouse === wh
+                  ? 'selected'
+                  : ''}"
                 onclick={() => selectWarehouse(wh)}
               >
                 {wh}
@@ -389,17 +440,27 @@
       {/if}
     </div>
 
-  <!-- ============================== -->
-  <!-- PHASE 2: SYSTEM & QUESTIONS    -->
-  <!-- ============================== -->
-  {:else if phase === 'system'}
+    <!-- ============================== -->
+    <!-- PHASE 2: SYSTEM & QUESTIONS    -->
+    <!-- ============================== -->
+  {:else if phase === "system"}
     <div class="system-layout">
       <!-- LEFT: System Selection (collapsible) -->
       <div class="system-panel" class:collapsed={systemPanelCollapsed}>
         {#if systemPanelCollapsed}
-          <button class="btn-back-collapsed" onclick={goBackToSystemSelection} title="Zpět na výběr systému">
+          <button
+            class="btn-back-collapsed"
+            onclick={goBackToSystemSelection}
+            title="Zpět na výběr systému"
+          >
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M13 4L7 10L13 16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path
+                d="M13 4L7 10L13 16"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
             </svg>
           </button>
           <span class="collapsed-system-name">{selectedSystem}</span>
@@ -428,9 +489,13 @@
       <!-- RIGHT: Diagram or Questions -->
       {#if !selectedSystem}
         <div class="diagram-panel">
-          <img src="/diagram/systems_diagram.png" alt="Schéma propojení systémů" class="diagram-img" />
+          <img
+            src="diagram/systems_diagram.png"
+            alt="Schéma propojení systémů"
+            class="diagram-img"
+          />
         </div>
-      {:else if currentStep && currentStep.type === 'select'}
+      {:else if currentStep && currentStep.type === "select"}
         <!-- DRILL-DOWN MODE: horizontal columns for select steps -->
         <div class="drilldown-panel">
           <div class="drilldown-columns">
@@ -446,7 +511,7 @@
               <span class="drilldown-label">{currentStep.question}</span>
               <div class="drilldown-options">
                 {#each currentStep.options as option, i (i)}
-                  {#if typeof option === 'string'}
+                  {#if typeof option === "string"}
                     <button
                       class="drilldown-option-btn"
                       onclick={() => selectAndAdvance(option)}
@@ -473,19 +538,21 @@
             <button class="btn-nav btn-back" onclick={goBack}>Krok zpět</button>
           </div>
         </div>
-
-      {:else if currentStep && currentStep.type === 'diagnostic'}
+      {:else if currentStep && currentStep.type === "diagnostic"}
         <!-- DIAGNOSTIC MODE: numbered vertical tabs + two-part detail panel -->
         <div class="diagnostic-panel">
           <h2 class="diagnostic-heading">{currentStep.question}</h2>
 
           <div class="diagnostic-layout">
             <div class="scenario-tabs">
-              <span class="scenario-tabs-label">Doporučené pořadí kontroly</span>
+              <span class="scenario-tabs-label">Doporučené pořadí kontroly</span
+              >
               {#each currentStep.scenarios as scenario, i (i)}
                 <button
-                  class="scenario-tab {selectedScenarioIndex === i ? 'active' : ''}"
-                  onclick={() => selectedScenarioIndex = i}
+                  class="scenario-tab {selectedScenarioIndex === i
+                    ? 'active'
+                    : ''}"
+                  onclick={() => (selectedScenarioIndex = i)}
                 >
                   <span class="scenario-tab-number">{i + 1}.</span>
                   {scenario.title}
@@ -513,25 +580,36 @@
                       <div class="resolution-details">
                         {#if resolution.actual_defect}
                           <div class="resolution-row">
-                            <span class="resolution-label">Zjištěná závada:</span>
-                            <span class="resolution-value">{resolution.actual_defect}</span>
+                            <span class="resolution-label"
+                              >Zjištěná závada:</span
+                            >
+                            <span class="resolution-value"
+                              >{resolution.actual_defect}</span
+                            >
                           </div>
                         {/if}
                         {#if resolution.resolver_group}
                           <div class="resolution-row">
-                            <span class="resolution-label">Resolver skupina:</span>
-                            <span class="resolution-value">{resolution.resolver_group}</span>
+                            <span class="resolution-label"
+                              >Resolver skupina:</span
+                            >
+                            <span class="resolution-value"
+                              >{resolution.resolver_group}</span
+                            >
                           </div>
                         {/if}
                         {#if resolution.impact}
                           <div class="resolution-row">
                             <span class="resolution-label">Impact:</span>
-                            <span class="resolution-value">{resolution.impact}</span>
+                            <span class="resolution-value"
+                              >{resolution.impact}</span
+                            >
                           </div>
                         {/if}
                         {#if resolution.backup_strategy}
                           <div class="resolution-backup">
-                            <strong>Záložní strategie:</strong> {resolution.backup_strategy}
+                            <strong>Záložní strategie:</strong>
+                            {resolution.backup_strategy}
                           </div>
                         {/if}
                       </div>
@@ -546,7 +624,8 @@
                   </div>
                 {:else}
                   <div class="resolution-selfclose">
-                    Eskalace není potřeba — incident lze uzavřít po provedení akce.
+                    Eskalace není potřeba — incident lze uzavřít po provedení
+                    akce.
                   </div>
                 {/if}
               </div>
@@ -557,7 +636,6 @@
             <button class="btn-nav btn-back" onclick={goBack}>Krok zpět</button>
           </div>
         </div>
-
       {:else if currentStep}
         <!-- FALLBACK: normal panel for boolean/info steps -->
         <div class="questions-panel">
@@ -568,23 +646,26 @@
           {/if}
 
           <div class="options-area">
-            {#if currentStep.type === 'boolean'}
+            {#if currentStep.type === "boolean"}
               <div class="boolean-buttons">
                 <button
-                  class="option-btn bool-btn {answers[currentStep.id] === true ? 'selected' : ''}"
+                  class="option-btn bool-btn {answers[currentStep.id] === true
+                    ? 'selected'
+                    : ''}"
                   onclick={() => selectAndAdvance(true)}
                 >
                   Ano
                 </button>
                 <button
-                  class="option-btn bool-btn {answers[currentStep.id] === false ? 'selected' : ''}"
+                  class="option-btn bool-btn {answers[currentStep.id] === false
+                    ? 'selected'
+                    : ''}"
                   onclick={() => selectAndAdvance(false)}
                 >
                   Ne
                 </button>
               </div>
-
-            {:else if currentStep.type === 'info'}
+            {:else if currentStep.type === "info"}
               <div class="info-box">
                 <p>Potvrďte přečtení a pokračujte.</p>
               </div>
@@ -592,10 +673,8 @@
           </div>
 
           <div class="question-nav">
-            <button class="btn-nav btn-back" onclick={goBack}>
-              Zpět
-            </button>
-            {#if currentStep.type === 'info'}
+            <button class="btn-nav btn-back" onclick={goBack}> Zpět </button>
+            {#if currentStep.type === "info"}
               <button class="btn-nav btn-next" onclick={goNext}>
                 Pokračovat
               </button>
@@ -604,19 +683,34 @@
         </div>
       {/if}
     </div>
-
   {/if}
-
 </main>
 
 <!-- Modální okno s výsledkem diagnostiky -->
 {#if isFinished}
-  <div class="modal-backdrop" onclick={closeResult} onkeydown={(e) => e.key === 'Escape' && closeResult()} role="dialog" aria-modal="true" tabindex="-1">
+  <div
+    class="modal-backdrop"
+    onclick={closeResult}
+    onkeydown={(e) => e.key === "Escape" && closeResult()}
+    role="dialog"
+    aria-modal="true"
+    tabindex="-1"
+  >
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
-    <div class="modal-card" onclick={(e) => e.stopPropagation()} onkeydown={(e) => e.stopPropagation()} role="document">
+    <div
+      class="modal-card"
+      onclick={(e) => e.stopPropagation()}
+      onkeydown={(e) => e.stopPropagation()}
+      role="document"
+    >
       <button class="modal-close" onclick={closeResult} aria-label="Zavřít">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-          <path d="M4 4L12 12M12 4L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path
+            d="M4 4L12 12M12 4L4 12"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+          />
         </svg>
       </button>
 
@@ -641,16 +735,15 @@
         {/if}
         {#if finalResult.backup_strategy}
           <div class="result-backup">
-            <strong>Záložní strategie:</strong> {finalResult.backup_strategy}
+            <strong>Záložní strategie:</strong>
+            {finalResult.backup_strategy}
           </div>
         {/if}
       {:else}
         <p class="result-empty">Proces byl ukončen bez vytvoření ticketu.</p>
       {/if}
 
-      <button class="btn-close-modal" onclick={closeResult}>
-        Zavřít
-      </button>
+      <button class="btn-close-modal" onclick={closeResult}> Zavřít </button>
     </div>
   </div>
 {/if}
